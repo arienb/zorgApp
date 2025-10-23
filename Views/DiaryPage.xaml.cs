@@ -1,24 +1,24 @@
-﻿namespace zorgApp
-{
-    public partial class MainPage : ContentPage
-    {
-        int count = 0;
+﻿using zorgApp.ViewModels;
 
-        public MainPage()
+namespace zorgApp.Views
+{
+    public partial class DiaryPage : ContentPage
+    {
+        public DiaryPage(DiaryPageViewModel viewModel)
         {
             InitializeComponent();
+            BindingContext = viewModel;
         }
 
-        private void OnCounterClicked(object? sender, EventArgs e)
+        protected override void OnAppearing()
         {
-            count++;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            base.OnAppearing();
+            
+            // Refresh de lijst wanneer we terug navigeren naar deze pagina
+            if (BindingContext is DiaryPageViewModel viewModel)
+            {
+                viewModel.LoadDiaryItemsCommand.Execute(null);
+            }
         }
     }
 }

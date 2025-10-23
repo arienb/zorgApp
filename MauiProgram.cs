@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using zorgApp.Services;
+using zorgApp.ViewModels;
+using zorgApp.Views;
 
 namespace zorgApp
 {
@@ -14,6 +17,17 @@ namespace zorgApp
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            // Register Services
+            builder.Services.AddSingleton<FirebaseService>();
+
+            // Register ViewModels
+            builder.Services.AddTransient<DiaryPageViewModel>();
+            builder.Services.AddTransient<AddDiaryItemViewModel>();
+
+            // Register Views
+            builder.Services.AddTransient<DiaryPage>();
+            builder.Services.AddTransient<AddDiaryItemView>();
 
 #if DEBUG
     		builder.Logging.AddDebug();
