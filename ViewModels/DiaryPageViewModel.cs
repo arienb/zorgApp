@@ -68,7 +68,10 @@ namespace zorgApp.ViewModels
             if (item == null)
                 return;
 
-            await Shell.Current.GoToAsync($"{nameof(Views.AddDiaryItemView)}?itemId={item.Id}");
+            System.Diagnostics.Debug.WriteLine($"ItemTapped - Navigating with ID: {item.Id}");
+            
+            // Navigeer naar details pagina met ItemId parameter (exact zoals QueryProperty naam!)
+            await Shell.Current.GoToAsync($"{nameof(Views.DiaryPageDetailsView)}?ItemId={item.Id}");
         }
     }
 }

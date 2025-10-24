@@ -24,10 +24,12 @@ namespace zorgApp
             // Register ViewModels
             builder.Services.AddTransient<DiaryPageViewModel>();
             builder.Services.AddTransient<AddDiaryItemViewModel>();
+            builder.Services.AddTransient<DiaryPageDetailsViewModel>();
 
             // Register Views
             builder.Services.AddTransient<DiaryPage>();
             builder.Services.AddTransient<AddDiaryItemView>();
+            builder.Services.AddTransient<DiaryPageDetailsView>();
 
 #if DEBUG
     		builder.Logging.AddDebug();

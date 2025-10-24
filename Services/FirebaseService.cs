@@ -24,6 +24,11 @@ namespace zorgApp.Services
             {
                 BaseAddress = new Uri(FirebaseUrl)
             };
+            
+            _jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
         }
 
         public async Task<List<DiaryItem>> GetDiaryItemsAsync()
@@ -39,31 +44,38 @@ namespace zorgApp.Services
                 }
 
                 var content = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Firebase Response: {content}");
 
                 if (string.IsNullOrWhiteSpace(content) || content == "null")
                 {
+                    System.Diagnostics.Debug.WriteLine("Firebase returned null or empty");
                     return new List<DiaryItem>();
                 }
 
-                var items = JsonSerializer.Deserialize<Dictionary<string, DiaryItem>>(content);
+                var items = JsonSerializer.Deserialize<Dictionary<string, DiaryItem>>(content, _jsonOptions);
 
-                if (items == null)
+                if (items == null || items.Count == 0)
                 {
+                    System.Diagnostics.Debug.WriteLine("No items deserialized");
                     return new List<DiaryItem>();
                 }
 
-                return items.Select(kvp => new DiaryItem
+                var result = new List<DiaryItem>();
+                foreach (var kvp in items)
                 {
-                    Id = kvp.Key,
-                    Title = kvp.Value.Title,
-                    Description = kvp.Value.Description,
-                    Timestamp = kvp.Value.Timestamp,
-                    CreatedBy = kvp.Value.CreatedBy
-                }).ToList();
+                    var item = kvp.Value;
+                    item.Id = kvp.Key;
+                    result.Add(item);
+                    System.Diagnostics.Debug.WriteLine($"Loaded item: {item.Id} - {item.Title} - {item.Timestamp}");
+                }
+
+                System.Diagnostics.Debug.WriteLine($"Total items loaded: {result.Count}");
+                return result;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Firebase GetDiaryItems Error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
                 return new List<DiaryItem>();
             }
         }
@@ -113,7 +125,7 @@ namespace zorgApp.Services
                     return null;
                 }
 
-                var item = JsonSerializer.Deserialize<DiaryItem>(content);
+                var item = JsonSerializer.Deserialize<DiaryItem>(content, _jsonOptions);
 
                 if (item != null)
                 {

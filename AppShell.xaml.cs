@@ -10,6 +10,7 @@ namespace zorgApp
 
             // Registreer routes voor navigation
             Routing.RegisterRoute(nameof(AddDiaryItemView), typeof(AddDiaryItemView));
+            Routing.RegisterRoute(nameof(DiaryPageDetailsView), typeof(DiaryPageDetailsView));
         }
     }
 }
