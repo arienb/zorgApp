@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Maui.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using zorgApp.Models;
@@ -10,6 +12,7 @@ namespace zorgApp.ViewModels
     public partial class AddDiaryItemViewModel : ObservableObject
     {
         private readonly FirebaseService _firebaseService;
+        private FileResult? _selectedImageResult;
 
         [ObservableProperty]
         private string _title = string.Empty;
@@ -29,11 +32,16 @@ namespace zorgApp.ViewModels
         [ObservableProperty]
         private bool _isSaving;
 
+        [ObservableProperty]
+        private ImageSource _image;
+
         public AddDiaryItemViewModel(FirebaseService firebaseService)
         {
             _firebaseService = firebaseService;
         }
 
+
+        // ------------- diaryItem saven -------------
         [RelayCommand(CanExecute = nameof(CanSave))]
         private async Task SaveAsync()
         {
@@ -51,6 +59,14 @@ namespace zorgApp.ViewModels
 
             IsSaving = true;
 
+            string? imageUrl = null;
+            if (_selectedImageResult != null)
+            {
+                using var stream = await _selectedImageResult.OpenReadAsync();
+                imageUrl = await _firebaseService.UploadImageAsync(stream, $"{Guid.NewGuid()}.jpg");
+            }
+            
+
             try
             {
                 // Combineer datum en tijd
@@ -60,6 +76,7 @@ namespace zorgApp.ViewModels
                 {
                     Title = Title,
                     Description = Description,
+                    ImageUrl = imageUrl,
                     Timestamp = combinedDateTime,
                     CreatedBy = CreatedBy
                 };
@@ -76,6 +93,24 @@ namespace zorgApp.ViewModels
             finally
             {
                 IsSaving = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task PickImage() 
+        {
+            try
+            {
+                var result = await MediaPicker.PickPhotoAsync();
+
+                if (result != null) {
+                    _selectedImageResult = result;
+                    Image = ImageSource.FromStream(() => result.OpenReadAsync().Result);
+                }
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Fout", $"kan de foto niet laden {ex.Message}", "Oke");
             }
         }
 

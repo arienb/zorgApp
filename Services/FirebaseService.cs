@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Microsoft.Maui.Storage;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -80,14 +82,22 @@ namespace zorgApp.Services
             }
         }
 
-        public async Task<string> AddDiaryItemAsync(DiaryItem item)
+        public async Task<string> AddDiaryItemAsync(DiaryItem item, Stream? imageStream = null, string? fileName = null)
         {
             try
             {
+                // 1. Upload Image
+                if (imageStream != null && !string.IsNullOrEmpty(fileName))
+                {
+                    var imageUrl = await UploadImageAsync(imageStream, fileName);
+                    item.ImageUrl = imageUrl;
+                }
+
                 var itemToAdd = new
                 {
                     item.Title,
                     item.Description,
+                    item.ImageUrl,
                     item.Timestamp,
                     item.CreatedBy
                 };
@@ -177,6 +187,28 @@ namespace zorgApp.Services
             {
                 System.Diagnostics.Debug.WriteLine($"Firebase DeleteDiaryItem Error: {ex.Message}");
                 throw;
+            }
+        }
+
+        public async Task<String?> UploadImageAsync(Stream imageStream, string fileName) 
+        {
+            try
+            {
+                var storageUrl = "https://firebasestorage.googleapis.com/v0/b/zorgapp-316e8.firebasestorage.app/o/" + Uri.EscapeDataString(fileName) + "?uploadType=media";
+
+                var content = new StreamContent(imageStream);
+                content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+
+                var response = await _httpClient.PostAsync(storageUrl, content);
+                response.EnsureSuccessStatusCode();
+
+                return $"https://firebasestorage.googleapis.com/v0/b/zorgapp-316e8.firebasestorage.app/o/{Uri.EscapeDataString(fileName)}?alt=media";
+
+            }
+            catch (Exception ex) 
+            {
+                System.Diagnostics.Debug.WriteLine($"UploadImageAsync Error: {ex.Message}");
+                return null;
             }
         }
 

@@ -11,7 +11,9 @@ namespace zorgApp.Models
         public string Title { get; set; } = string.Empty;
         
         public string Description { get; set; } = string.Empty;
-        
+
+        public string? ImageUrl { get; set; }
+
         public DateTime Timestamp { get; set; } = DateTime.Now;
         
         public string CreatedBy { get; set; } = string.Empty;

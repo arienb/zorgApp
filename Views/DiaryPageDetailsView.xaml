@@ -4,10 +4,16 @@
              xmlns:viewmodels="clr-namespace:zorgApp.ViewModels"
              x:Class="zorgApp.Views.DiaryPageDetailsView"
              x:DataType="viewmodels:DiaryPageDetailsViewModel"
+             xmlns:converters="clr-namespace:zorgApp.Converters"
              Title="{Binding DiaryItem.Title}"
              BackgroundColor="#F5F7FA"
              Shell.NavBarIsVisible="True">
-
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:NullToInverseBoolConverter x:Key="NullToInverseBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
     <Shell.BackButtonBehavior>
         <BackButtonBehavior Command="{Binding GoBackCommand}" />
     </Shell.BackButtonBehavior>
@@ -74,37 +80,40 @@
                         </VerticalStackLayout>
                     </Border>
 
-                    <!-- Maker Card -->
-                    <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                            Padding="20,16"
-                            StrokeThickness="0"
-                            BackgroundColor="White">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="16" />
-                        </Border.StrokeShape>
-                        <Border.Shadow>
-                            <Shadow Brush="#E0E7FF"
-                                    Offset="0,4"
-                                    Radius="12"
-                                    Opacity="0.5" />
-                        </Border.Shadow>
-                        <VerticalStackLayout Spacing="8">
-                            <Label Text="👤"
-                                   FontSize="32"
-                                   HorizontalTextAlignment="Center" />
-                            <Label Text="Gemaakt door"
-                                   FontSize="12"
-                                   TextColor="#6B7280"
-                                   HorizontalTextAlignment="Center"
-                                   FontAttributes="Bold" />
-                            <Label Text="{Binding DiaryItem.CreatedBy}"
-                                   FontSize="16"
-                                   TextColor="#1F2937"
-                                   FontAttributes="Bold"
-                                   HorizontalTextAlignment="Center" />
-                        </VerticalStackLayout>
-                    </Border>
+
                 </Grid>
+
+                <!-- Foto weergave -->
+                <Border Padding="0"
+                        StrokeThickness="0"
+                        BackgroundColor="White">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="20" />
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black"
+                                Offset="0,4"
+                                Radius="12"
+                                Opacity="0.1" />
+                    </Border.Shadow>
+
+                    <Grid>
+                        <Image Source="{Binding DiaryItem.ImageUrl}"
+                               Aspect="AspectFit"
+                               HorizontalOptions="Fill"
+                               VerticalOptions="Center"
+                               HeightRequest="250"
+                               Margin="0" />
+
+                        <!-- Placeholder als er geen foto is -->
+                        <Label Text="Geen afbeelding beschikbaar"
+                               FontSize="14"
+                               TextColor="Gray"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               IsVisible="{Binding DiaryItem.ImageUrl, Converter={StaticResource NullToInverseBoolConverter}}" />
+                    </Grid>
+                </Border>
 
                 <!-- Beschrijving Card -->
                 <Border Padding="24"
@@ -167,7 +176,37 @@
                                LineBreakMode="WordWrap" />
                     </VerticalStackLayout>
                 </Border>
-
+                
+                <!-- Maker Card -->
+                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                            Padding="20,16"
+                            StrokeThickness="0"
+                            BackgroundColor="White">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16" />
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="#E0E7FF"
+                                    Offset="0,4"
+                                    Radius="12"
+                                    Opacity="0.5" />
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="👤"
+                                   FontSize="32"
+                                   HorizontalTextAlignment="Center" />
+                        <Label Text="Gemaakt door"
+                                   FontSize="12"
+                                   TextColor="#6B7280"
+                                   HorizontalTextAlignment="Center"
+                                   FontAttributes="Bold" />
+                        <Label Text="{Binding DiaryItem.CreatedBy}"
+                                   FontSize="16"
+                                   TextColor="#1F2937"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
             </VerticalStackLayout>
         </ScrollView>
 
