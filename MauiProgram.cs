@@ -33,6 +33,7 @@ namespace zorgApp
             builder.Services.AddTransient<AddDiaryItemView>();
             builder.Services.AddTransient<DiaryPageDetailsView>();
             builder.Services.AddTransient<StartupSelectionPage>();
+            builder.Services.AddTransient<PatientSelectionScreen>();
 
 #if DEBUG
             builder.Logging.AddDebug();

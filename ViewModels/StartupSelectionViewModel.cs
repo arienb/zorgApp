@@ -15,7 +15,7 @@ namespace zorgApp.ViewModels
         [RelayCommand]
         private async Task Nurse()
         {
-            await Shell.Current.DisplayAlert("Info", "Nurse functionality not implemented.", "OK");
+            await Shell.Current.GoToAsync("PatientSelectionScreen");
         }
     }
 }
