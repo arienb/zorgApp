@@ -9,7 +9,7 @@
 
     <TabBar>
         <Tab Title="Dagboek">
-            <ShellContent ContentTemplate="{DataTemplate views:DiaryPage}" />
+            <ShellContent ContentTemplate="{DataTemplate views:StartupSelectionPage}" Route="StartupSelectionPage" />
         </Tab>
     </TabBar>
 
