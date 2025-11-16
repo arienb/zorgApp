@@ -2,7 +2,10 @@
 
 public class Patient
 {
-    public int Id { get; set; }
-    public string Name { get; set; } = "";
-    public string Email { get; set; } = "";
+    public string? FirebaseId { get; set; }
+    public string? Name { get; set; }        // "name"
+    public string? Email { get; set; }       // "email"
+    public int? Age { get; set; }            // "age"
+    public string? RoomNumber { get; set; }  // "roomNumber"
+    public string? Condition { get; set; }   // "condition"
 }
