@@ -9,39 +9,41 @@ using zorgApp.Services;
 
 namespace zorgApp.ViewModels
 {
+    [QueryProperty(nameof(PatientId), nameof(PatientId))]
     public partial class AddDiaryItemViewModel : ObservableObject
     {
         private readonly FirebaseService _firebaseService;
         private FileResult? _selectedImageResult;
 
         [ObservableProperty]
-        private string _title = string.Empty;
+        private string patientId = string.Empty;
 
         [ObservableProperty]
-        private string _description = string.Empty;
+        private string title = string.Empty;
 
         [ObservableProperty]
-        private DateTime _timestamp = DateTime.Now;
+        private string description = string.Empty;
 
         [ObservableProperty]
-        private TimeSpan _time = DateTime.Now.TimeOfDay;
+        private DateTime timestamp = DateTime.Now;
 
         [ObservableProperty]
-        private string _createdBy = string.Empty;
+        private TimeSpan time = DateTime.Now.TimeOfDay;
 
         [ObservableProperty]
-        private bool _isSaving;
+        private string createdBy = string.Empty;
 
         [ObservableProperty]
-        private ImageSource _image;
+        private bool isSaving;
+
+        [ObservableProperty]
+        private ImageSource image;
 
         public AddDiaryItemViewModel(FirebaseService firebaseService)
         {
             _firebaseService = firebaseService;
         }
 
-
-        // ------------- diaryItem saven -------------
         [RelayCommand(CanExecute = nameof(CanSave))]
         private async Task SaveAsync()
         {
@@ -57,6 +59,12 @@ namespace zorgApp.ViewModels
                 return;
             }
 
+            if (string.IsNullOrEmpty(PatientId))
+            {
+                await Shell.Current.DisplayAlert("Fout", "Geen patiënt geselecteerd", "OK");
+                return;
+            }
+
             IsSaving = true;
 
             string? imageUrl = null;
@@ -65,15 +73,14 @@ namespace zorgApp.ViewModels
                 using var stream = await _selectedImageResult.OpenReadAsync();
                 imageUrl = await _firebaseService.UploadImageAsync(stream, $"{Guid.NewGuid()}.jpg");
             }
-            
 
             try
             {
-                // Combineer datum en tijd
                 var combinedDateTime = Timestamp.Date + Time;
 
                 var newItem = new DiaryItem
                 {
+                    PatientId = PatientId,
                     Title = Title,
                     Description = Description,
                     ImageUrl = imageUrl,
@@ -81,7 +88,7 @@ namespace zorgApp.ViewModels
                     CreatedBy = CreatedBy
                 };
 
-                await _firebaseService.AddDiaryItemAsync(newItem);
+                await _firebaseService.AddDiaryItemAsync(PatientId, newItem);
 
                 await Shell.Current.DisplayAlert("Succes", "Dagboek item toegevoegd!", "OK");
                 await Shell.Current.GoToAsync("..");

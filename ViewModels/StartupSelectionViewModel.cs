@@ -9,13 +9,31 @@ namespace zorgApp.ViewModels
         [RelayCommand]
         private async Task Patient()
         {
-            await Shell.Current.GoToAsync("DiaryPage");
+            await Shell.Current.GoToAsync("PatientLoginPage");
         }
 
         [RelayCommand]
         private async Task Nurse()
         {
-            await Shell.Current.GoToAsync("PatientSelectionScreen");
+            string password = await Shell.Current.DisplayPromptAsync(
+                "Verpleegkundige Login",
+                "Voer uw wachtwoord in:",
+                keyboard: Keyboard.Numeric,
+                maxLength: 4
+            );
+
+            if (password == "1234")
+            {
+                await Shell.Current.GoToAsync("PatientSelectionScreen");
+            }
+            else if (!string.IsNullOrEmpty(password))
+            {
+                await Shell.Current.DisplayAlert(
+                    "Toegang Geweigerd",
+                    "Ongeldig wachtwoord. Probeer het opnieuw.",
+                    "OK"
+                );
+            }
         }
     }
 }

@@ -7,113 +7,99 @@
              BackgroundColor="#F5F7FA"
              Shell.NavBarIsVisible="False">
 
-    <!-- Root layout -->
     <Grid RowDefinitions="*,Auto" Padding="30,60,30,30">
 
-        <!-- Center content -->
         <VerticalStackLayout
             Grid.Row="0"
-            Spacing="25"
+            Spacing="30"
             VerticalOptions="Center"
             HorizontalOptions="Center">
 
-            <!-- App Icon or Emoji -->
             <Label Text="🩺"
-                   FontSize="80"
+                   FontSize="90"
                    HorizontalOptions="Center"
                    Margin="0,0,0,10" />
 
-            <Label Text="Selecteer jouw rol"
-                   FontSize="26"
+            <Label Text="Welkom!"
+                   FontSize="32"
                    FontAttributes="Bold"
                    HorizontalTextAlignment="Center"
                    TextColor="#1F2937" />
 
-            <Label Text="Kies hoe je de dagboek app wilt gebruiken"
+            <Label Text="Mijn digitale dagboek"
                    FontSize="16"
                    TextColor="#6B7280"
                    HorizontalTextAlignment="Center"
-                   Margin="0,5,0,20" />
+                   Margin="0,0,0,30" />
 
-            <!-- Card with buttons -->
             <Border
                 StrokeThickness="0"
-                BackgroundColor="White"
-                Padding="30,40"
+                HeightRequest="80"
                 HorizontalOptions="Fill"
                 MaximumWidthRequest="400">
-
                 <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="25" />
+                    <RoundRectangle CornerRadius="20" />
                 </Border.StrokeShape>
-
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#6366F1" Offset="0.0" />
+                        <GradientStop Color="#8B5CF6" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Border.Background>
                 <Border.Shadow>
                     <Shadow Brush="#6366F1"
-                            Offset="0,6"
-                            Radius="16"
-                            Opacity="0.15" />
+                            Offset="0,8"
+                            Radius="20"
+                            Opacity="0.3" />
                 </Border.Shadow>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding PatientCommand}" />
+                </Border.GestureRecognizers>
 
-                <VerticalStackLayout Spacing="25">
-
-                    <!-- Patient Button -->
-                    <Border
-                        StrokeThickness="0"
-                        HeightRequest="60">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="15" />
-                        </Border.StrokeShape>
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#6366F1" Offset="0.0" />
-                                <GradientStop Color="#8B5CF6" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Border.Background>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding PatientCommand}" />
-                        </Border.GestureRecognizers>
-
-                        <Label Text="👤  Patiënt"
-                               FontSize="18"
-                               FontAttributes="Bold"
-                               TextColor="White"
-                               VerticalOptions="Center"
-                               HorizontalOptions="Center" />
-                    </Border>
-
-                    <!-- Nurse Button -->
-                    <Border
-                        StrokeThickness="0"
-                        HeightRequest="60">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="15" />
-                        </Border.StrokeShape>
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#8B5CF6" Offset="0.0" />
-                                <GradientStop Color="#EC4899" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </Border.Background>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding NurseCommand}" />
-                        </Border.GestureRecognizers>
-
-                        <Label Text="🩹  Verpleegkundige"
-                               FontSize="18"
-                               FontAttributes="Bold"
-                               TextColor="White"
-                               VerticalOptions="Center"
-                               HorizontalOptions="Center" />
-                    </Border>
-
+                <VerticalStackLayout 
+                    Spacing="6"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center">
+                    <Label Text="Inloggen als Patiënt"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalOptions="Center" />
                 </VerticalStackLayout>
+            </Border>
+
+            <Border
+                Padding="16,12"
+                StrokeThickness="1"
+                Stroke="#D1D5DB"
+                BackgroundColor="White"
+                HorizontalOptions="Fill"
+                MaximumWidthRequest="400"
+                Margin="0,20,0,0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NurseCommand}" />
+                </Border.GestureRecognizers>
+
+                <HorizontalStackLayout 
+                    Spacing="10"
+                    HorizontalOptions="Center">
+                    <Label Text="🩹"
+                           FontSize="18"
+                           VerticalOptions="Center" />
+                    <Label Text="Verpleegkundige login"
+                           FontSize="15"
+                           TextColor="#6B7280"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
             </Border>
         </VerticalStackLayout>
 
-        <!-- Footer (optional) -->
         <Label Grid.Row="1"
                Text="zorgApp © 2025"
-               FontSize="13"
+               FontSize="12"
                TextColor="#9CA3AF"
                HorizontalTextAlignment="Center"
                Margin="0,20,0,0" />

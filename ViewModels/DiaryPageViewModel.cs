@@ -10,12 +10,16 @@ using zorgApp.Services;
 
 namespace zorgApp.ViewModels
 {
+    [QueryProperty(nameof(PatientId), nameof(PatientId))]
     public partial class DiaryPageViewModel : ObservableObject
     {
         private readonly FirebaseService _firebaseService;
 
         [ObservableProperty]
-        private bool _isRefreshing;
+        private string patientId = string.Empty;
+
+        [ObservableProperty]
+        private bool isRefreshing;
 
         public ObservableCollection<DiaryItem> DiaryItems { get; set; }
 
@@ -23,26 +27,40 @@ namespace zorgApp.ViewModels
         {
             _firebaseService = firebaseService;
             DiaryItems = new ObservableCollection<DiaryItem>();
+        }
 
-            _ = LoadDiaryItemsAsync();
+        partial void OnPatientIdChanged(string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                _ = LoadDiaryItemsAsync();
+            }
         }
 
         [RelayCommand]
         private async Task AddItemAsync()
         {
-            await Shell.Current.GoToAsync(nameof(Views.AddDiaryItemView));
+            if (string.IsNullOrEmpty(PatientId))
+            {
+                await Shell.Current.DisplayAlert("Fout", "Geen patiënt geselecteerd", "OK");
+                return;
+            }
+
+            await Shell.Current.GoToAsync($"{nameof(Views.AddDiaryItemView)}?PatientId={PatientId}");
         }
 
         [RelayCommand]
         private async Task LoadDiaryItemsAsync()
         {
+            if (string.IsNullOrEmpty(PatientId))
+                return;
+
             IsRefreshing = true;
 
             try
             {
-                var items = await _firebaseService.GetDiaryItemsAsync();
+                var items = await _firebaseService.GetDiaryItemsAsync(PatientId);
                 
-                // Sorteer chronologisch met nieuwste bovenaan
                 var sortedItems = items.OrderByDescending(i => i.Timestamp).ToList();
 
                 DiaryItems.Clear();
@@ -53,7 +71,6 @@ namespace zorgApp.ViewModels
             }
             catch (Exception ex)
             {
-                // Handle error - toon melding aan gebruiker
                 await Shell.Current.DisplayAlert("Fout", $"Kon dagboek items niet laden: {ex.Message}", "OK");
             }
             finally
@@ -70,8 +87,13 @@ namespace zorgApp.ViewModels
 
             System.Diagnostics.Debug.WriteLine($"ItemTapped - Navigating with ID: {item.Id}");
             
-            // Navigeer naar details pagina met ItemId parameter (exact zoals QueryProperty naam!)
-            await Shell.Current.GoToAsync($"{nameof(Views.DiaryPageDetailsView)}?ItemId={item.Id}");
+            await Shell.Current.GoToAsync($"{nameof(Views.DiaryPageDetailsView)}?PatientId={PatientId}&ItemId={item.Id}");
+        }
+
+        [RelayCommand]
+        private async Task GoBackCommand()
+        {
+            await Shell.Current.GoToAsync("..");
         }
     }
 }

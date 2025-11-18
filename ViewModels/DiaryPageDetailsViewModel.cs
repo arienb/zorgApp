@@ -7,19 +7,23 @@ using zorgApp.Services;
 
 namespace zorgApp.ViewModels
 {
+    [QueryProperty(nameof(PatientId), nameof(PatientId))]
     [QueryProperty(nameof(ItemId), nameof(ItemId))]
     public partial class DiaryPageDetailsViewModel : ObservableObject
     {
         private readonly FirebaseService _firebaseService;
 
         [ObservableProperty]
-        private string _itemId = string.Empty;
+        private string patientId = string.Empty;
 
         [ObservableProperty]
-        private DiaryItem? _diaryItem;
+        private string itemId = string.Empty;
 
         [ObservableProperty]
-        private bool _isLoading;
+        private DiaryItem? diaryItem;
+
+        [ObservableProperty]
+        private bool isLoading;
 
         public DiaryPageDetailsViewModel(FirebaseService firebaseService)
         {
@@ -28,19 +32,27 @@ namespace zorgApp.ViewModels
 
         partial void OnItemIdChanged(string value)
         {
-            if (!string.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(PatientId))
             {
-                _ = LoadDiaryItemAsync(value);
+                _ = LoadDiaryItemAsync();
             }
         }
 
-        private async Task LoadDiaryItemAsync(string itemId)
+        partial void OnPatientIdChanged(string value)
+        {
+            if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(ItemId))
+            {
+                _ = LoadDiaryItemAsync();
+            }
+        }
+
+        private async Task LoadDiaryItemAsync()
         {
             IsLoading = true;
 
             try
             {
-                var item = await _firebaseService.GetDiaryItemByIdAsync(itemId);
+                var item = await _firebaseService.GetDiaryItemByIdAsync(PatientId, ItemId);
 
                 if (item != null)
                 {
@@ -68,7 +80,7 @@ namespace zorgApp.ViewModels
         {
             if (DiaryItem != null)
             {
-                await Shell.Current.GoToAsync($"{nameof(Views.AddDiaryItemView)}?itemId={DiaryItem.Id}");
+                await Shell.Current.GoToAsync($"{nameof(Views.AddDiaryItemView)}?PatientId={PatientId}&ItemId={DiaryItem.Id}");
             }
         }
 
@@ -89,7 +101,7 @@ namespace zorgApp.ViewModels
 
             try
             {
-                await _firebaseService.DeleteDiaryItemAsync(DiaryItem.Id);
+                await _firebaseService.DeleteDiaryItemAsync(PatientId, DiaryItem.Id);
                 await Shell.Current.DisplayAlert("Succes", "Dagboek item verwijderd!", "OK");
                 await Shell.Current.GoToAsync("..");
             }
@@ -97,6 +109,12 @@ namespace zorgApp.ViewModels
             {
                 await Shell.Current.DisplayAlert("Fout", $"Kon item niet verwijderen: {ex.Message}", "OK");
             }
+        }
+
+        [RelayCommand]
+        private async Task GoBackCommand()
+        {
+            await Shell.Current.GoToAsync("..");
         }
     }
 }

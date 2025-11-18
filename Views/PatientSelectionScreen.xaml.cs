@@ -4,9 +4,9 @@ namespace zorgApp.Views;
 
 public partial class PatientSelectionScreen : ContentPage
 {
-	public PatientSelectionScreen()
+	public PatientSelectionScreen(PatientSelectionScreenViewModel viewModel)
 	{
 		InitializeComponent();
-        BindingContext = new PatientSelectionScreenViewModel();
+        BindingContext = viewModel;
     }
 }

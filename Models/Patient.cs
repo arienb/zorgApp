@@ -3,9 +3,9 @@
 public class Patient
 {
     public string? FirebaseId { get; set; }
-    public string? Name { get; set; }        // "name"
-    public string? Email { get; set; }       // "email"
-    public int? Age { get; set; }            // "age"
-    public string? RoomNumber { get; set; }  // "roomNumber"
-    public string? Condition { get; set; }   // "condition"
+    public string? Name { get; set; }
+    public string? Email { get; set; }
+    public int? Age { get; set; }
+    public string? RoomNumber { get; set; }
+    public string? UniqueCode { get; set; } 
 }
