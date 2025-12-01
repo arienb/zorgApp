@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:zorgApp.ViewModels"
+             x:Class="zorgApp.Views.NewPatientView"
+             x:DataType="viewModels:NewPatientViewModel"
+             Title="{Binding IsEditMode, Converter={StaticResource EditModeTitleConverter}}">
+    
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label Text="Naam*" FontAttributes="Bold" TextColor="#1F2937"/>
+            <Entry Text="{Binding Name}"
+                   Placeholder="Voer naam in"
+                   IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
+
+            <Label Text="Email*" FontAttributes="Bold" TextColor="#1F2937"/>
+            <Entry Text="{Binding Email}"
+                   Placeholder="Voer email in"
+                   Keyboard="Email"
+                   IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
+
+            <Label Text="Leeftijd*" FontAttributes="Bold" TextColor="#1F2937"/>
+            <Entry Text="{Binding AgeText}"
+                   Placeholder="Voer leeftijd in"
+                   Keyboard="Numeric"
+                   IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
+
+            <Label Text="Kamernummer*" FontAttributes="Bold" TextColor="#1F2937"/>
+            <Entry Text="{Binding RoomNumber}"
+                   Placeholder="Voer kamernummer in"
+                   IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
+
+            <Label Text="* Alle velden zijn verplicht"
+                   FontSize="12"
+                   TextColor="#6B7280"
+                   Margin="0,0,0,10"/>
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                             IsVisible="{Binding IsLoading}"
+                             Color="{StaticResource Primary}"
+                             Margin="0,20,0,0"/>
+
+            <Button Text="Opslaan"
+                    Command="{Binding SavePatientCommand}"
+                    IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
+                    Margin="0,20,0,0"/>
+
+            <Button Text="Annuleren"
+                    Command="{Binding CancelCommand}"
+                    IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"
+                    BackgroundColor="Gray"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

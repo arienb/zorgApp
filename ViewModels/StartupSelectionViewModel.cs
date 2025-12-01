@@ -6,6 +6,9 @@ namespace zorgApp.ViewModels
 {
     public partial class StartupSelectionViewModel : ObservableObject
     {
+        [ObservableProperty]
+        private bool isInfoPopupVisible;
+
         [RelayCommand]
         private async Task Patient()
         {
@@ -34,6 +37,18 @@ namespace zorgApp.ViewModels
                     "OK"
                 );
             }
+        }
+
+        [RelayCommand]
+        private void ShowInfo()
+        {
+            IsInfoPopupVisible = true;
+        }
+
+        [RelayCommand]
+        private void CloseInfo()
+        {
+            IsInfoPopupVisible = false;
         }
     }
 }

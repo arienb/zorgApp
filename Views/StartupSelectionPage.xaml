@@ -7,18 +7,13 @@
              BackgroundColor="#F5F7FA"
              Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="*,Auto" Padding="30,60,30,30">
+    <Grid RowDefinitions="*,Auto,Auto" Padding="30,60,30,30">
 
         <VerticalStackLayout
             Grid.Row="0"
             Spacing="30"
             VerticalOptions="Center"
             HorizontalOptions="Center">
-
-            <Label Text="🩺"
-                   FontSize="90"
-                   HorizontalOptions="Center"
-                   Margin="0,0,0,10" />
 
             <Label Text="Welkom!"
                    FontSize="32"
@@ -59,7 +54,8 @@
                 <VerticalStackLayout 
                     Spacing="6"
                     VerticalOptions="Center"
-                    HorizontalOptions="Center">
+                    HorizontalOptions="Center"
+                    Padding="19">
                     <Label Text="Inloggen als Patiënt"
                            FontSize="20"
                            FontAttributes="Bold"
@@ -86,9 +82,6 @@
                 <HorizontalStackLayout 
                     Spacing="10"
                     HorizontalOptions="Center">
-                    <Label Text="🩹"
-                           FontSize="18"
-                           VerticalOptions="Center" />
                     <Label Text="Verpleegkundige login"
                            FontSize="15"
                            TextColor="#6B7280"
@@ -97,11 +90,203 @@
             </Border>
         </VerticalStackLayout>
 
-        <Label Grid.Row="1"
+        <!-- Info Button - centered above copyright -->
+        <Border
+            Grid.Row="1"
+            WidthRequest="50"
+            HeightRequest="50"
+            StrokeThickness="2"
+            Stroke="#6366F1"
+            BackgroundColor="White"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            Margin="0,20,0,10"
+            InputTransparent="False">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="25" />
+            </Border.StrokeShape>
+            <Border.Shadow>
+                <Shadow Brush="#6366F1" Offset="0,2" Radius="8" Opacity="0.2" />
+            </Border.Shadow>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding ShowInfoCommand}" />
+            </Border.GestureRecognizers>
+
+            <Label Text="i"
+                   FontSize="26"
+                   FontAttributes="Bold"
+                   TextColor="#6366F1"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   InputTransparent="True" />
+        </Border>
+
+        <!-- Copyright -->
+        <Label Grid.Row="2"
                Text="zorgApp © 2025"
                FontSize="12"
                TextColor="#9CA3AF"
                HorizontalTextAlignment="Center"
-               Margin="0,20,0,0" />
+               Margin="0,0,0,0" />
+
+        <!-- Info Popup Overlay - Full Screen Blur -->
+        <Grid Grid.RowSpan="3"
+              IsVisible="{Binding IsInfoPopupVisible}"
+              BackgroundColor="#CC000000"
+              Padding="0"
+              Margin="-30,-60,-30,-30"
+              InputTransparent="False">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CloseInfoCommand}" />
+            </Grid.GestureRecognizers>
+
+            <!-- Popup Content -->
+            <Border
+                BackgroundColor="White"
+                StrokeThickness="0"
+                WidthRequest="400"
+                MaximumHeightRequest="650"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Margin="20"
+                Padding="0"
+                InputTransparent="False">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20" />
+                </Border.StrokeShape>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <!-- Header -->
+                    <Border Grid.Row="0"
+                            BackgroundColor="#6366F1"
+                            Padding="24,20"
+                            StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="20,20,0,0" />
+                        </Border.StrokeShape>
+                        
+                        <Label Text="Over dit dagboek"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalTextAlignment="Center"
+                               VerticalOptions="Center" />
+                    </Border>
+
+                    <!-- Content -->
+                    <ScrollView Grid.Row="1" Padding="24,20">
+                        <VerticalStackLayout Spacing="12">
+                            <Label TextColor="#1F2937" LineHeight="1.6">
+                                <Label.FormattedText>
+                                    <FormattedString>   
+                                        <Span Text="Beste patiënt, beste naaste,&#x0a;&#x0a;" 
+                                              FontAttributes="Bold" 
+                                              FontSize="15"/>
+                                        <Span Text="Een opname in het ziekenhuis is een ingrijpende gebeurtenis. Daarom bieden we een digitaal dagboek aan. Jij, je naasten en zorgverleners kunnen hierin gedachten, gevoelens, ervaringen en herinneringen opschrijven.&#x0a;&#x0a;" 
+                                              FontSize="14"/>
+                                        <Span Text="Schrijven kan helpen om grip te krijgen op wat er gebeurt. Later kun je samen teruglezen om het proces beter te begrijpen en te verwerken.&#x0a;&#x0a;" 
+                                              FontSize="14"/>
+                                        <Span Text="Waarvoor kun je dit dagboek gebruiken?" 
+                                              FontAttributes="Bold" 
+                                              FontSize="15"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                            <Border BackgroundColor="#EEF2FF"
+                                    Padding="14,10"
+                                    StrokeThickness="0"
+                                    Margin="0,4,0,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout Spacing="8">
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Label Text="✓" TextColor="#6366F1" FontSize="15" FontAttributes="Bold" VerticalOptions="Start" Margin="0,1,0,0"/>
+                                        <Label Text="Ervaringen delen met zorgverleners" 
+                                               TextColor="#1F2937" 
+                                               FontSize="13"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="FillAndExpand"/>
+                                    </HorizontalStackLayout>
+                                    
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Label Text="✓" TextColor="#6366F1" FontSize="15" FontAttributes="Bold" VerticalOptions="Start" Margin="0,1,0,0"/>
+                                        <Label Text="Notities maken over de dagelijkse ontwikkelingen" 
+                                               TextColor="#1F2937" 
+                                               FontSize="13"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="FillAndExpand"/>
+                                    </HorizontalStackLayout>
+                                    
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Label Text="✓" TextColor="#6366F1" FontSize="15" FontAttributes="Bold" VerticalOptions="Start" Margin="0,1,0,0"/>
+                                        <Label Text="Herinneringen bewaren" 
+                                               TextColor="#1F2937" 
+                                               FontSize="13"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="FillAndExpand"/>
+                                    </HorizontalStackLayout>
+                                    
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Label Text="✓" TextColor="#6366F1" FontSize="15" FontAttributes="Bold" VerticalOptions="Start" Margin="0,1,0,0"/>
+                                        <Label Text="Foto's, tekeningen, brieven of artikelen opslaan" 
+                                               TextColor="#1F2937" 
+                                               FontSize="13"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="FillAndExpand"/>
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Border BackgroundColor="#FEF3C7"
+                                    Padding="14"
+                                    StrokeThickness="0"
+                                    Margin="0,4,0,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12" />
+                                </Border.StrokeShape>
+                                <Label TextColor="#92400E" FontSize="13" LineHeight="1.5">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Let op: " FontAttributes="Bold"/>
+                                            <Span Text="Dit dagboek is niet bedoeld voor medische informatie. Voor medische vragen kun je altijd terecht bij de verpleegkundige of arts."/>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </Border>
+
+                            <Label Text="We wensen jullie veel kracht en warmte in deze periode."
+                                   FontSize="13"
+                                   TextColor="#6366F1"
+                                   HorizontalTextAlignment="Center"
+                                   Margin="0,8,0,0"/>
+                        </VerticalStackLayout>
+                    </ScrollView>
+
+                    <!-- Footer -->
+                    <Border Grid.Row="2"
+                            BackgroundColor="#F9FAFB"
+                            Padding="20,16"
+                            StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="0,0,20,20" />
+                        </Border.StrokeShape>
+                        
+                        <Button Text="Sluiten"
+                                Command="{Binding CloseInfoCommand}"
+                                BackgroundColor="#6366F1"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                CornerRadius="10"
+                                HeightRequest="44"
+                                HorizontalOptions="Fill" />
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </ContentPage>

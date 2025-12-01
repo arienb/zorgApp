@@ -11,7 +11,11 @@
     BackgroundColor="#F5F7FA"
     Shell.NavBarIsVisible="True">
 
-    <Grid RowDefinitions="*,Auto">
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" IsEnabled="False" />
+    </Shell.BackButtonBehavior>
+
+    <Grid RowDefinitions="*,Auto,Auto">
 
         <RefreshView
             Grid.Row="0"
@@ -65,7 +69,7 @@
                                 <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PatientSelectionScreenViewModel}}, Path=SelectPatientCommand}" CommandParameter="{Binding .}" />
                             </Border.GestureRecognizers>
 
-                            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="5">
+                            <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="8" RowSpacing="5">
 
                                 <Label
                                     Grid.Row="0"
@@ -90,10 +94,37 @@
                                     FontAttributes="Bold"
                                     TextColor="#6366F1" />
 
+                                <!-- Edit Button -->
                                 <Border
                                     Grid.Row="0"
                                     Grid.RowSpan="3"
                                     Grid.Column="1"
+                                    WidthRequest="32"
+                                    HeightRequest="32"
+                                    StrokeThickness="0"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="Center"
+                                    BackgroundColor="#EEF2FF">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="16" />
+                                    </Border.StrokeShape>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PatientSelectionScreenViewModel}}, Path=EditPatientCommand}" CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+
+                                    <Label
+                                        Text="✏️"
+                                        FontSize="16"
+                                        TextColor="#6366F1"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center" />
+                                </Border>
+
+                                <!-- Delete Button -->
+                                <Border
+                                    Grid.Row="0"
+                                    Grid.RowSpan="3"
+                                    Grid.Column="2"
                                     WidthRequest="32"
                                     HeightRequest="32"
                                     StrokeThickness="0"
@@ -122,6 +153,7 @@
             </CollectionView>
         </RefreshView>
 
+        <!-- Add Patient Button -->
         <Border
             Grid.Row="1"
             WidthRequest="70"
@@ -154,5 +186,19 @@
                 HorizontalOptions="Center"
                 VerticalOptions="Center" />
         </Border>
+
+        <!-- Logout Button -->
+        <Button 
+            Grid.Row="2"
+            Text="Uitloggen"
+            Command="{Binding LogoutCommand}"
+            BackgroundColor="#E5E7EB"
+            TextColor="#6B7280"
+            FontSize="13"
+            CornerRadius="8"
+            Margin="20,0,20,15"
+            HeightRequest="36"
+            HorizontalOptions="Center"
+            WidthRequest="120" />
     </Grid>
 </ContentPage>

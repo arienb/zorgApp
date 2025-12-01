@@ -26,6 +26,14 @@ public partial class PatientSelectionScreenViewModel : ObservableObject
         AddPatientCommand = new AsyncRelayCommand(AddPatientAsync);
         RemovePatientCommand = new AsyncRelayCommand<Patient>(RemovePatientAsync);
         SelectPatientCommand = new AsyncRelayCommand<Patient>(SelectPatientAsync);
+        EditPatientCommand = new AsyncRelayCommand<Patient>(EditPatientAsync);
+        LogoutCommand = new AsyncRelayCommand(LogoutAsync);
+
+        // Subscribe to PatientAdded message
+        MessagingCenter.Subscribe<NewPatientViewModel>(this, "PatientAdded", async (sender) =>
+        {
+            await LoadPatientsAsync();
+        });
 
         Task.Run(async () => await LoadPatientsAsync());
     }
@@ -34,6 +42,8 @@ public partial class PatientSelectionScreenViewModel : ObservableObject
     public IAsyncRelayCommand AddPatientCommand { get; }
     public IAsyncRelayCommand<Patient> RemovePatientCommand { get; }
     public IAsyncRelayCommand<Patient> SelectPatientCommand { get; }
+    public IAsyncRelayCommand<Patient> EditPatientCommand { get; }
+    public IAsyncRelayCommand LogoutCommand { get; }
 
     private async Task LoadPatientsAsync()
     {
@@ -66,60 +76,28 @@ public partial class PatientSelectionScreenViewModel : ObservableObject
     {
         try
         {
-            string name = await Shell.Current.DisplayPromptAsync(
-                "Nieuwe Patiënt",
-                "Naam:"
-            );
-
-            if (string.IsNullOrWhiteSpace(name))
-                return;
-
-            string email = await Shell.Current.DisplayPromptAsync(
-                "Nieuwe Patiënt",
-                "Email:"
-            );
-
-            string ageStr = await Shell.Current.DisplayPromptAsync(
-                "Nieuwe Patiënt",
-                "Leeftijd:",
-                keyboard: Keyboard.Numeric
-            );
-
-            int? age = null;
-            if (int.TryParse(ageStr, out int parsedAge))
-                age = parsedAge;
-
-            string roomNumber = await Shell.Current.DisplayPromptAsync(
-                "Nieuwe Patiënt",
-                "Kamernummer:"
-            );
-
-            var newPatient = new Patient
-            {
-                Name = name,
-                Email = email,
-                Age = age,
-                RoomNumber = roomNumber
-            };
-
-            var firebaseId = await _firebaseService.AddPatientAsync(newPatient);
-
-            if (!string.IsNullOrEmpty(firebaseId))
-            {
-                newPatient.FirebaseId = firebaseId;
-                Patients.Add(newPatient);
-
-                await Shell.Current.DisplayAlert(
-                    "Patiënt Toegevoegd",
-                    $"Patiënt {name} is toegevoegd.\n\nUnieke code: {newPatient.UniqueCode}\n\nGeef deze code aan de patiënt voor toegang tot hun dagboek.",
-                    "OK"
-                );
-            }
+            await Shell.Current.GoToAsync("NewPatientView");
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error adding patient: {ex.Message}");
-            await Shell.Current.DisplayAlert("Fout", $"Kon patiënt niet toevoegen: {ex.Message}", "OK");
+            System.Diagnostics.Debug.WriteLine($"Error navigating to NewPatientView: {ex.Message}");
+            await Shell.Current.DisplayAlert("Fout", $"Kon niet navigeren naar nieuwe patiënt pagina: {ex.Message}", "OK");
+        }
+    }
+
+    private async Task EditPatientAsync(Patient? patient)
+    {
+        if (patient == null || string.IsNullOrEmpty(patient.FirebaseId))
+            return;
+
+        try
+        {
+            await Shell.Current.GoToAsync($"NewPatientView?PatientId={patient.FirebaseId}");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error navigating to edit patient: {ex.Message}");
+            await Shell.Current.DisplayAlert("Fout", $"Kon niet navigeren naar bewerk pagina: {ex.Message}", "OK");
         }
     }
 
@@ -157,5 +135,27 @@ public partial class PatientSelectionScreenViewModel : ObservableObject
         if (patient == null) return;
 
         await Shell.Current.GoToAsync($"DiaryPage?PatientId={patient.FirebaseId}");
+    }
+
+    private async Task LogoutAsync()
+    {
+        bool confirm = await Shell.Current.DisplayAlert(
+            "Uitloggen",
+            "Weet je zeker dat je wilt uitloggen?",
+            "Ja",
+            "Nee"
+        );
+
+        if (!confirm) return;
+
+        try
+        {
+            await Shell.Current.GoToAsync("//StartupSelectionPage");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error logging out: {ex.Message}");
+            await Shell.Current.DisplayAlert("Fout", $"Kon niet uitloggen: {ex.Message}", "OK");
+        }
     }
 }

@@ -19,6 +19,9 @@ namespace zorgApp.ViewModels
         private string patientId = string.Empty;
 
         [ObservableProperty]
+        private string patientName = string.Empty;
+
+        [ObservableProperty]
         private bool isRefreshing;
 
         public ObservableCollection<DiaryItem> DiaryItems { get; set; }
@@ -33,7 +36,31 @@ namespace zorgApp.ViewModels
         {
             if (!string.IsNullOrEmpty(value))
             {
-                _ = LoadDiaryItemsAsync();
+                _ = LoadPatientAndDiaryItemsAsync();
+            }
+        }
+
+        private async Task LoadPatientAndDiaryItemsAsync()
+        {
+            await LoadPatientNameAsync();
+            await LoadDiaryItemsAsync();
+        }
+
+        private async Task LoadPatientNameAsync()
+        {
+            try
+            {
+                var patients = await _firebaseService.GetPatientsAsync();
+                var patient = patients.FirstOrDefault(p => p.FirebaseId == PatientId);
+                
+                if (patient != null)
+                {
+                    PatientName = patient.Name;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading patient name: {ex.Message}");
             }
         }
 

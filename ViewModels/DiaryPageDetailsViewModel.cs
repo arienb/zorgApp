@@ -46,6 +46,15 @@ namespace zorgApp.ViewModels
             }
         }
 
+        [RelayCommand]
+        private async Task RefreshAsync()
+        {
+            if (!string.IsNullOrEmpty(PatientId) && !string.IsNullOrEmpty(ItemId))
+            {
+                await LoadDiaryItemAsync();
+            }
+        }
+
         private async Task LoadDiaryItemAsync()
         {
             IsLoading = true;
@@ -80,7 +89,7 @@ namespace zorgApp.ViewModels
         {
             if (DiaryItem != null)
             {
-                await Shell.Current.GoToAsync($"{nameof(Views.AddDiaryItemView)}?PatientId={PatientId}&ItemId={DiaryItem.Id}");
+                await Shell.Current.GoToAsync($"AddDiaryItemView?PatientId={PatientId}&DiaryItemId={DiaryItem.Id}");
             }
         }
 

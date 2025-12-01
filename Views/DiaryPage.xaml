@@ -5,7 +5,7 @@
              xmlns:models="clr-namespace:zorgApp.Models"
              x:Class="zorgApp.Views.DiaryPage"
              x:DataType="viewmodels:DiaryPageViewModel"
-             Title="Dagboek"
+             Title="{Binding PatientName, StringFormat='Dagboek {0}'}"
              BackgroundColor="#F5F7FA">
 
     <Grid RowDefinitions="*,Auto">

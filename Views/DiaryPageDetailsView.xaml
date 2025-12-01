@@ -10,6 +10,8 @@
              Shell.NavBarIsVisible="True">
     <ContentPage.Resources>
         <ResourceDictionary>
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:StringNotNullOrEmptyConverter x:Key="StringNotNullOrEmptyConverter" />
             <converters:NullToInverseBoolConverter x:Key="NullToInverseBoolConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
@@ -79,14 +81,13 @@
                                    HorizontalTextAlignment="Center" />
                         </VerticalStackLayout>
                     </Border>
-
-
                 </Grid>
 
-                <!-- Foto weergave -->
+                <!-- Foto weergave - Alleen zichtbaar als er een afbeelding is -->
                 <Border Padding="0"
                         StrokeThickness="0"
-                        BackgroundColor="White">
+                        BackgroundColor="White"
+                        IsVisible="{Binding DiaryItem.ImageUrl, Converter={StaticResource StringNotNullOrEmptyConverter}}">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="20" />
                     </Border.StrokeShape>
@@ -97,22 +98,16 @@
                                 Opacity="0.1" />
                     </Border.Shadow>
 
-                    <Grid>
-                        <Image Source="{Binding DiaryItem.ImageUrl}"
-                               Aspect="AspectFit"
-                               HorizontalOptions="Fill"
-                               VerticalOptions="Center"
-                               HeightRequest="250"
-                               Margin="0" />
-
-                        <!-- Placeholder als er geen foto is -->
-                        <Label Text="Geen afbeelding beschikbaar"
-                               FontSize="14"
-                               TextColor="Gray"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"
-                               IsVisible="{Binding DiaryItem.ImageUrl, Converter={StaticResource NullToInverseBoolConverter}}" />
-                    </Grid>
+                    <Image Source="{Binding DiaryItem.ImageUrl}"
+                           Aspect="AspectFill"
+                           HorizontalOptions="Fill"
+                           VerticalOptions="Fill"
+                           HeightRequest="250"
+                           Margin="0">
+                        <Image.Clip>
+                            <RoundRectangleGeometry CornerRadius="20" Rect="0,0,400,250" />
+                        </Image.Clip>
+                    </Image>
                 </Border>
 
                 <!-- Beschrijving Card -->

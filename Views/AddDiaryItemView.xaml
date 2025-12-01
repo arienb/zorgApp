@@ -5,11 +5,13 @@
              x:Class="zorgApp.Views.AddDiaryItemView"
              xmlns:converters="clr-namespace:zorgApp.Converters"
              x:DataType="viewmodels:AddDiaryItemViewModel"
-             Title="Nieuw Dagboek Item">
+             Title="{Binding IsEditMode, Converter={StaticResource DiaryItemEditModeTitleConverter}}">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:NullToBoolConverter x:Key="NullToBoolConverter" />
             <converters:NullToInverseBoolConverter x:Key="NullToInverseBoolConverter" />
+            <converters:DiaryItemEditModeTitleConverter x:Key="DiaryItemEditModeTitleConverter" />
+            <converters:DiaryItemEditModeButtonConverter x:Key="DiaryItemEditModeButtonConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
     
@@ -67,6 +69,14 @@
                 </Border>
             </Grid>
 
+            <!-- Change Image Button (when image exists) -->
+            <Button Text="Foto wijzigen"
+                    Command="{Binding PickImageCommand}"
+                    IsVisible="{Binding Image, Converter={StaticResource NullToBoolConverter}}"
+                    BackgroundColor="#3498DB"
+                    TextColor="White"
+                    Margin="0,5,0,0" />
+
             <!-- Date -->
             <Label Text="Datum"
                    FontSize="16"
@@ -103,7 +113,7 @@
                         Command="{Binding CancelCommand}" />
 
                 <Button Grid.Column="1"
-                        Text="Opslaan"
+                        Text="{Binding IsEditMode, Converter={StaticResource DiaryItemEditModeButtonConverter}}"
                         BackgroundColor="#3498DB"
                         TextColor="White"
                         Command="{Binding SaveCommand}" />

@@ -92,7 +92,6 @@ namespace zorgApp.Services
         {
             try
             {
-                // Generate unique code if not provided
                 if (string.IsNullOrEmpty(patient.UniqueCode))
                 {
                     patient.UniqueCode = GenerateUniqueCode();
@@ -271,7 +270,7 @@ namespace zorgApp.Services
             }
         }
 
-        public async Task UpdateDiaryItemAsync(string patientId, string itemId, DiaryItem item)
+        public async Task UpdateDiaryItemAsync(string patientId, DiaryItem item)
         {
             try
             {
@@ -286,7 +285,7 @@ namespace zorgApp.Services
 
                 var json = JsonSerializer.Serialize(itemToUpdate);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await _httpClient.PutAsync($"/{PatientsNode}/{patientId}/diaryItems/{itemId}.json", content);
+                var response = await _httpClient.PutAsync($"/{PatientsNode}/{patientId}/diaryItems/{item.Id}.json", content);
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
@@ -341,7 +340,6 @@ namespace zorgApp.Services
         // -------------------------------------- 
         private string GenerateUniqueCode()
         {
-            // Generate a 6-character alphanumeric code
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var random = new Random();
             return new string(Enumerable.Repeat(chars, 6)

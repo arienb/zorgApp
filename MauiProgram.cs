@@ -28,6 +28,7 @@ namespace zorgApp
             builder.Services.AddTransient<StartupSelectionViewModel>();
             builder.Services.AddTransient<PatientSelectionScreenViewModel>();
             builder.Services.AddTransient<PatientLoginViewModel>();
+            builder.Services.AddTransient<NewPatientViewModel>();
 
             // Register Views
             builder.Services.AddTransient<DiaryPage>();
@@ -36,6 +37,7 @@ namespace zorgApp
             builder.Services.AddTransient<StartupSelectionPage>();
             builder.Services.AddTransient<PatientSelectionScreen>();
             builder.Services.AddTransient<PatientLoginPage>();
+            builder.Services.AddTransient<NewPatientView>();
 
 #if DEBUG
             builder.Logging.AddDebug();
