@@ -14,6 +14,7 @@ namespace zorgApp
             Routing.RegisterRoute(nameof(PatientSelectionScreen), typeof(PatientSelectionScreen));
             Routing.RegisterRoute(nameof(PatientLoginPage), typeof(PatientLoginPage));
             Routing.RegisterRoute(nameof(NewPatientView), typeof(NewPatientView));
+            Routing.RegisterRoute(nameof(PatientProfilePage), typeof(PatientProfilePage));
         }
     }
 }

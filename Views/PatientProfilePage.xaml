@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewmodels="clr-namespace:zorgApp.ViewModels"
+             x:Class="zorgApp.Views.PatientProfilePage"
+             x:DataType="viewmodels:PatientProfileViewModel"
+             Title="Patiënt Profiel"
+             BackgroundColor="#F5F7FA">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="20">
+
+            <!-- Header -->
+            <Border StrokeThickness="0" Padding="20" BackgroundColor="White" Margin="0,0,0,10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20"/>
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,4" Radius="12" Opacity="0.1"/>
+                </Border.Shadow>
+
+                <HorizontalStackLayout Spacing="15">
+                    <Image Source="profile.png" WidthRequest="80" HeightRequest="80"/>
+                    <VerticalStackLayout>
+                        <Label Text="{Binding Patient.Name}" FontSize="24" FontAttributes="Bold" TextColor="#1F2937"/>
+                        <Label Text="{Binding Patient.Email}" FontSize="14" TextColor="#6B7280"/>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Vaste gegevens -->
+            <Border StrokeThickness="0" Padding="20" BackgroundColor="White">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20"/>
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,4" Radius="12" Opacity="0.1"/>
+                </Border.Shadow>
+
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="gegevens" FontSize="18" FontAttributes="Bold" TextColor="#374151"/>
+                    <Label TextColor="#4B5563">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Leeftijd: " />
+                                <Span Text="{Binding Patient.Age}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    
+                    <Label TextColor="#4B5563">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Kamer: " />
+                                <Span Text="{Binding Patient.RoomNumber}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    
+                    <Label TextColor="#4B5563">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Unieke code: " />
+                                <Span Text="{Binding Patient.UniqueCode}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Aanpasbare gegevens -->
+            <Border StrokeThickness="0" Padding="20" BackgroundColor="White">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20"/>
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,4" Radius="12" Opacity="0.1"/>
+                </Border.Shadow>
+
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Persoonlijke voorkeuren" FontSize="18" FontAttributes="Bold" TextColor="#374151"/>
+
+                    <!-- Roepnaam -->
+                    <HorizontalStackLayout>
+                        <Label Text="Roepnaam:" VerticalOptions="Center"/>
+                        <Entry Text="{Binding Patient.CallName}">
+                            <Entry.Behaviors>
+                                <!-- FIX: Ensure you have installed the CommunityToolkit.Maui NuGet package and called builder.UseMauiCommunityToolkit() in MauiProgram.cs -->
+                                <toolkit:EventToCommandBehavior
+                                    EventName="Completed"
+                                    Command="{Binding SaveProfileCommand}" />
+                            </Entry.Behaviors>
+                        </Entry>
+                        <Label Text="{Binding Patient.CallName}" 
+                               IsVisible="{Binding IsEditingCallName, Converter={StaticResource InverseBoolConverter}}"/>
+                        <Image Source="edit.png" WidthRequest="20" HeightRequest="20"
+                               GestureRecognizers="{TapGestureRecognizer Command={Binding EditCallNameCommand}}"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Hobby's -->
+                    <HorizontalStackLayout>
+                        <Label Text="Hobby's:" VerticalOptions="Center"/>
+                        <Entry Text="{Binding Patient.Hobbies}">
+                            <Entry.Behaviors>
+                                <toolkit:EventToCommandBehavior
+                                    EventName="Completed"
+                                    Command="{Binding SaveHobbiesCommand}" />
+                            </Entry.Behaviors>
+                        </Entry>
+                        <Label Text="{Binding Patient.Hobbies}" 
+                               IsVisible="{Binding IsEditingHobbies, Converter={StaticResource InverseBoolConverter}}"/>
+                        <Image Source="edit.png" WidthRequest="20" HeightRequest="20"
+                               GestureRecognizers="{TapGestureRecognizer Command={Binding EditHobbiesCommand}}"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Favoriet eten -->
+                    <HorizontalStackLayout>
+                        <Label Text="Favoriet eten:" VerticalOptions="Center"/>
+                        <Entry Text="{Binding Patient.FavoriteFood}">
+                            <Entry.Behaviors>
+                                <toolkit:EventToCommandBehavior
+                                    EventName="Completed"
+                                    Command="{Binding SaveFoodCommand}" />
+                            </Entry.Behaviors>
+                        </Entry>
+                        <Label Text="{Binding Patient.FavoriteFood}" 
+                               IsVisible="{Binding IsEditingFood, Converter={StaticResource InverseBoolConverter}}"/>
+                        <Image Source="edit.png" WidthRequest="20" HeightRequest="20"
+                               GestureRecognizers="{TapGestureRecognizer Command={Binding EditFoodCommand}}"/>
+                    </HorizontalStackLayout>
+
+                    <HorizontalStackLayout>
+                        <Label Text="Favoriete film/serie:" VerticalOptions="Center"/>
+                        <Entry Text="{Binding Patient.FavoriteFilm}">
+                            <Entry.Behaviors>
+                                <toolkit:EventToCommandBehavior
+                                    EventName="Completed"
+                                    Command="{Binding SaveFilmCommand}" />
+                            </Entry.Behaviors>
+                        </Entry>
+                        <Label Text="{Binding Patient.FavoriteFilm}" 
+                               IsVisible="{Binding IsEditingFilm, Converter={StaticResource InverseBoolConverter}}"/>
+                        <Image Source="edit.png" WidthRequest="20" HeightRequest="20"
+                               GestureRecognizers="{TapGestureRecognizer Command={Binding EditFilmCommand}}"/>
+                    </HorizontalStackLayout>
+                    
+                    <HorizontalStackLayout>
+                        <Label Text="Favoriete muziek:" VerticalOptions="Center"/>
+                        <Entry Text="{Binding Patient.FavoriteMusic}">
+                            <Entry.Behaviors>
+                                <toolkit:EventToCommandBehavior
+                                    EventName="Completed"
+                                    Command="{Binding SaveMusicCommand}" />
+                            </Entry.Behaviors>
+                        </Entry>
+                        <Label Text="{Binding Patient.FavoriteMusic}" 
+                               IsVisible="{Binding IsEditingMusic, Converter={StaticResource InverseBoolConverter}}"/>
+                        <Image Source="edit.png" WidthRequest="20" HeightRequest="20"
+                               GestureRecognizers="{TapGestureRecognizer Command={Binding EditMusicCommand}}"/>
+                    </HorizontalStackLayout>
+                    
+                    <HorizontalStackLayout>
+                        <Label Text="Beroep:" VerticalOptions="Center"/>
+                        <Entry Text="{Binding Patient.Work}">
+                            <Entry.Behaviors>
+                                <toolkit:EventToCommandBehavior
+                                    EventName="Completed"
+                                    Command="{Binding SaveWorkCommand}" />
+                            </Entry.Behaviors>
+                        </Entry>
+                        <Label Text="{Binding Patient.Work}" 
+                               IsVisible="{Binding IsEditingWork, Converter={StaticResource InverseBoolConverter}}"/>
+                        <Image Source="edit.png" WidthRequest="20" HeightRequest="20"
+                               GestureRecognizers="{TapGestureRecognizer Command={Binding EditWorkCommand}}"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

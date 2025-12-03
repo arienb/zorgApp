@@ -2,6 +2,7 @@
 using zorgApp.Services;
 using zorgApp.ViewModels;
 using zorgApp.Views;
+using CommunityToolkit.Maui;
 
 namespace zorgApp
 {
@@ -12,6 +13,7 @@ namespace zorgApp
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -29,6 +31,7 @@ namespace zorgApp
             builder.Services.AddTransient<PatientSelectionScreenViewModel>();
             builder.Services.AddTransient<PatientLoginViewModel>();
             builder.Services.AddTransient<NewPatientViewModel>();
+            builder.Services.AddTransient<PatientProfileViewModel>();
 
             // Register Views
             builder.Services.AddTransient<DiaryPage>();
@@ -38,6 +41,8 @@ namespace zorgApp
             builder.Services.AddTransient<PatientSelectionScreen>();
             builder.Services.AddTransient<PatientLoginPage>();
             builder.Services.AddTransient<NewPatientView>();
+            builder.Services.AddTransient<PatientProfilePage>();
+
 
 #if DEBUG
             builder.Logging.AddDebug();

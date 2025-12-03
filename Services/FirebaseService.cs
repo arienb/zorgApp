@@ -120,6 +120,9 @@ namespace zorgApp.Services
             }
         }
 
+        // -------------------------------------- 
+        //  PATIENT INFO UPDATEN & DELETEN
+        // -------------------------------------- 
         public async Task UpdatePatientAsync(string id, Patient patient)
         {
             try
@@ -143,6 +146,34 @@ namespace zorgApp.Services
                 System.Diagnostics.Debug.WriteLine($"Firebase UpdatePatient Error: {ex.Message}");
                 throw;
             }
+        }
+
+        public async Task UpdatePatientProfileAsync(string id, Patient patient) 
+        {
+            try
+            {
+                var toUpdate = new
+                {
+                    patient.CallName,
+                    patient.Hobbies,
+                    patient.Work,
+                    patient.FavoriteFood,
+                    patient.FavoriteFilm,
+                    patient.FavoriteMusic
+                };
+
+                var json = JsonSerializer.Serialize(toUpdate);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PatchAsync($"/{PatientsNode}/{id}.json", content);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase UpdatePatientProfile Error: {ex.Message}");
+                throw;
+            }
+
         }
 
         public async Task DeletePatientAsync(string id)

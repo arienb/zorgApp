@@ -118,6 +118,29 @@ namespace zorgApp.ViewModels
         }
 
         [RelayCommand]
+        private async Task NavigateToProfileAsync() 
+        {
+            if (string.IsNullOrEmpty(patientId)) 
+            {
+                await Shell.Current.DisplayAlert("Fout", "kan huidige patiënt niet vinden", "OK");
+                return;
+            }
+
+            var patients = await _firebaseService.GetPatientsAsync();
+            var patient = patients.FirstOrDefault(p => p.FirebaseId == PatientId);
+            if (patient is null)
+            {
+                await Shell.Current.DisplayAlert("Fout", "Patiënt niet gevonden", "OK");
+                return;
+            }
+
+            await Shell.Current.GoToAsync(nameof(Views.PatientProfilePage), new Dictionary<string, object>
+            {
+                ["Patient"] = patient
+            });
+        }
+
+        [RelayCommand]
         private async Task GoBackCommand()
         {
             await Shell.Current.GoToAsync("..");

@@ -20,5 +20,10 @@ namespace zorgApp.Views
                 viewModel.LoadDiaryItemsCommand.Execute(null);
             }
         }
+
+        private void OnBackButtonClicked(object sender, EventArgs e)
+        {
+            Navigation.PopAsync();
+        }
     }
 }
