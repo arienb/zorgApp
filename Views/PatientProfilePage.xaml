@@ -9,114 +9,272 @@
              BackgroundColor="#F5F7FA">
 
     <ScrollView>
-        <VerticalStackLayout Spacing="20" Padding="20">
+        <VerticalStackLayout Spacing="16" Padding="16">
 
-            <!-- Header -->
-            <Border StrokeThickness="0" Padding="20" BackgroundColor="White" Margin="0,0,0,10">
+            <!-- Header Card with Profile Picture -->
+            <Border StrokeThickness="0" 
+                    Padding="24" 
+                    BackgroundColor="White" 
+                    Margin="0,0,0,8">
                 <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="20"/>
+                    <RoundRectangle CornerRadius="16"/>
                 </Border.StrokeShape>
                 <Border.Shadow>
-                    <Shadow Brush="Black" Offset="0,4" Radius="12" Opacity="0.1"/>
+                    <Shadow Brush="Black" Offset="0,2" Radius="8" Opacity="0.08"/>
                 </Border.Shadow>
 
-                <HorizontalStackLayout Spacing="15">
-                    <Image Source="profile.png" WidthRequest="80" HeightRequest="80"/>
-                    <VerticalStackLayout>
-                        <Label Text="{Binding Patient.Name}" FontSize="24" FontAttributes="Bold" TextColor="#1F2937"/>
-                        <Label Text="{Binding Patient.Email}" FontSize="14" TextColor="#6B7280"/>
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                    <!-- Profile Picture with Tap Gesture -->
+                    <Border Grid.Column="0" 
+                            StrokeThickness="3" 
+                            Stroke="#2563EB"
+                            WidthRequest="80" 
+                            HeightRequest="80"
+                            VerticalOptions="Center">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="40"/>
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SelectProfileImageCommand}" />
+                        </Border.GestureRecognizers>
+
+                        <Grid>
+                            <!-- Display selected image -->
+                            <Image Source="{Binding Patient.ProfileImageUrl, TargetNullValue='profile.png', FallbackValue='profile.png'}" 
+                                   Aspect="AspectFill"
+                                   IsVisible="{Binding HasProfileImage}"
+                                   HorizontalOptions="Fill"
+                                   VerticalOptions="Fill"/>
+
+                            <!-- Camera icon when no profile image -->
+                            <Border BackgroundColor="#EEF2FF"
+                                    IsVisible="{Binding HasProfileImage, Converter={toolkit:InvertedBoolConverter}}"
+                                    WidthRequest="74"
+                                    HeightRequest="74"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="37"/>
+                                </Border.StrokeShape>
+                                <Label Text="📷"
+                                       FontSize="32"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"/>
+                            </Border>
+
+                            <!-- Loading indicator during upload -->
+                            <Border BackgroundColor="#2563EB"
+                                    Opacity="0.9"
+                                    IsVisible="{Binding IsUploadingImage}"
+                                    WidthRequest="74"
+                                    HeightRequest="74"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="37"/>
+                                </Border.StrokeShape>
+                                <ActivityIndicator IsRunning="{Binding IsUploadingImage}"
+                                                 Color="White"
+                                                 WidthRequest="30"
+                                                 HeightRequest="30"
+                                                 HorizontalOptions="Center"
+                                                 VerticalOptions="Center"/>
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <!-- Name and Email -->
+                    <VerticalStackLayout Grid.Column="1" 
+                                       Spacing="4" 
+                                       VerticalOptions="Center">
+                        <Label Text="{Binding Patient.Name}" 
+                               FontSize="22" 
+                               FontAttributes="Bold" 
+                               TextColor="#1F2937"
+                               LineBreakMode="TailTruncation"/>
+                        <Label Text="{Binding Patient.Email}" 
+                               FontSize="14" 
+                               TextColor="#6B7280"
+                               LineBreakMode="TailTruncation"/>
                     </VerticalStackLayout>
-                </HorizontalStackLayout>
+                </Grid>
             </Border>
 
-            <!-- Vaste gegevens -->
-            <Border StrokeThickness="0" Padding="20" BackgroundColor="White">
+            <!-- Patient Information Card -->
+            <Border StrokeThickness="0" 
+                    Padding="20" 
+                    BackgroundColor="White">
                 <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="20"/>
+                    <RoundRectangle CornerRadius="16"/>
                 </Border.StrokeShape>
                 <Border.Shadow>
-                    <Shadow Brush="Black" Offset="0,4" Radius="12" Opacity="0.1"/>
+                    <Shadow Brush="Black" Offset="0,2" Radius="8" Opacity="0.08"/>
                 </Border.Shadow>
 
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="gegevens" FontSize="18" FontAttributes="Bold" TextColor="#374151"/>
-                    <Label TextColor="#4B5563">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Leeftijd: " />
-                                <Span Text="{Binding Patient.Age}" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    
-                    <Label TextColor="#4B5563">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Kamer: " />
-                                <Span Text="{Binding Patient.RoomNumber}" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Patiëntgegevens" 
+                           FontSize="18" 
+                           FontAttributes="Bold" 
+                           TextColor="#1F2937"
+                           Margin="0,0,0,8"/>
 
-                    <Label TextColor="#4B5563">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Unieke code: " />
-                                <Span Text="{Binding Patient.UniqueCode}" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
+                    <!-- Info Grid -->
+                    <Grid RowDefinitions="Auto,Auto,Auto" 
+                          ColumnDefinitions="Auto,*"
+                          RowSpacing="12"
+                          ColumnSpacing="12">
+
+                        <!-- Age -->
+                        <Label Grid.Row="0" Grid.Column="0" 
+                               Text="Leeftijd:" 
+                               FontAttributes="Bold"
+                               TextColor="#4B5563"
+                               VerticalOptions="Center"/>
+                        <Label Grid.Row="0" Grid.Column="1" 
+                               Text="{Binding Patient.Age}" 
+                               TextColor="#1F2937"
+                               VerticalOptions="Center"/>
+
+                        <!-- Room Number -->
+                        <Label Grid.Row="1" Grid.Column="0" 
+                               Text="Kamer:" 
+                               FontAttributes="Bold"
+                               TextColor="#4B5563"
+                               VerticalOptions="Center"/>
+                        <Label Grid.Row="1" Grid.Column="1" 
+                               Text="{Binding Patient.RoomNumber}" 
+                               TextColor="#1F2937"
+                               VerticalOptions="Center"/>
+
+                        <!-- Unique Code -->
+                        <Label Grid.Row="2" Grid.Column="0" 
+                               Text="Unieke code:" 
+                               FontAttributes="Bold"
+                               TextColor="#4B5563"
+                               VerticalOptions="Center"/>
+                        <Label Grid.Row="2" Grid.Column="1" 
+                               Text="{Binding Patient.UniqueCode}" 
+                               TextColor="#1F2937"
+                               FontFamily="Courier"
+                               VerticalOptions="Center"/>
+                    </Grid>
                 </VerticalStackLayout>
             </Border>
 
-            <!-- Aanpasbare gegevens || profiel -->
-            <Border StrokeThickness="0" Padding="20" BackgroundColor="White">
+            <!-- Personal Profile Card -->
+            <Border StrokeThickness="0" 
+                    Padding="20" 
+                    BackgroundColor="White">
                 <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="20"/>
+                    <RoundRectangle CornerRadius="16"/>
                 </Border.StrokeShape>
                 <Border.Shadow>
-                    <Shadow Brush="Black" Offset="0,4" Radius="12" Opacity="0.1"/>
+                    <Shadow Brush="Black" Offset="0,2" Radius="8" Opacity="0.08"/>
                 </Border.Shadow>
 
-                <VerticalStackLayout Spacing="15">
-                    <Label Text="Persoonlijk profiel" FontSize="18" FontAttributes="Bold" TextColor="#374151"/>
+                <VerticalStackLayout Spacing="16">
+                    <Label Text="Persoonlijk profiel" 
+                           FontSize="18" 
+                           FontAttributes="Bold" 
+                           TextColor="#1F2937"
+                           Margin="0,0,0,4"/>
 
-                    <HorizontalStackLayout>
-                        <Label Text="Roepnaam:" VerticalOptions="Center"/>
-                        <Entry Text="{Binding Patient.CallName}"/>
-                    </HorizontalStackLayout>
+                    <!-- Form Fields -->
+                    <VerticalStackLayout Spacing="16">
 
-                    <HorizontalStackLayout>
-                        <Label Text="Hobby's:" VerticalOptions="Center"/>
-                        <Entry Text="{Binding Patient.Hobbies}"/>
-                    </HorizontalStackLayout>
+                        <!-- Call Name -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Roepnaam" 
+                                   FontSize="13" 
+                                   TextColor="#6B7280"
+                                   FontAttributes="Bold"/>
+                            <Entry Text="{Binding Patient.CallName}"
+                                   Placeholder="Voer roepnaam in"
+                                   BackgroundColor="#F9FAFB"
+                                   TextColor="#1F2937"
+                                   PlaceholderColor="#9CA3AF"/>
+                        </VerticalStackLayout>
 
-                    <HorizontalStackLayout>
-                        <Label Text="Favoriet eten:" VerticalOptions="Center"/>
-                        <Entry Text="{Binding Patient.FavoriteFood}"/>
-                    </HorizontalStackLayout>
+                        <!-- Hobbies -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Hobby's" 
+                                   FontSize="13" 
+                                   TextColor="#6B7280"
+                                   FontAttributes="Bold"/>
+                            <Entry Text="{Binding Patient.Hobbies}"
+                                   Placeholder="Voer hobby's in"
+                                   BackgroundColor="#F9FAFB"
+                                   TextColor="#1F2937"
+                                   PlaceholderColor="#9CA3AF"/>
+                        </VerticalStackLayout>
 
-                    <HorizontalStackLayout>
-                        <Label Text="Favoriete film/serie:" VerticalOptions="Center"/>
-                        <Entry Text="{Binding Patient.FavoriteFilm}"/>
-                    </HorizontalStackLayout>
-                    
-                    <HorizontalStackLayout>
-                        <Label Text="Favoriete muziek:" VerticalOptions="Center"/>
-                        <Entry Text="{Binding Patient.FavoriteMusic}"/>
-                    </HorizontalStackLayout>
-                    
-                    <HorizontalStackLayout>
-                        <Label Text="Beroep:" VerticalOptions="Center"/>
-                        <Entry Text="{Binding Patient.Work}"/>
-                    </HorizontalStackLayout>
-                    
-                    <Button Text="Opslaan"
+                        <!-- Favorite Food -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Favoriet eten" 
+                                   FontSize="13" 
+                                   TextColor="#6B7280"
+                                   FontAttributes="Bold"/>
+                            <Entry Text="{Binding Patient.FavoriteFood}"
+                                   Placeholder="Voer favoriet eten in"
+                                   BackgroundColor="#F9FAFB"
+                                   TextColor="#1F2937"
+                                   PlaceholderColor="#9CA3AF"/>
+                        </VerticalStackLayout>
+
+                        <!-- Favorite Film/Series -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Favoriete film/serie" 
+                                   FontSize="13" 
+                                   TextColor="#6B7280"
+                                   FontAttributes="Bold"/>
+                            <Entry Text="{Binding Patient.FavoriteFilm}"
+                                   Placeholder="Voer favoriet film/serie in"
+                                   BackgroundColor="#F9FAFB"
+                                   TextColor="#1F2937"
+                                   PlaceholderColor="#9CA3AF"/>
+                        </VerticalStackLayout>
+
+                        <!-- Favorite Music -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Favoriete muziek" 
+                                   FontSize="13" 
+                                   TextColor="#6B7280"
+                                   FontAttributes="Bold"/>
+                            <Entry Text="{Binding Patient.FavoriteMusic}"
+                                   Placeholder="Voer favoriete muziek in"
+                                   BackgroundColor="#F9FAFB"
+                                   TextColor="#1F2937"
+                                   PlaceholderColor="#9CA3AF"/>
+                        </VerticalStackLayout>
+
+                        <!-- Work -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Beroep" 
+                                   FontSize="13" 
+                                   TextColor="#6B7280"
+                                   FontAttributes="Bold"/>
+                            <Entry Text="{Binding Patient.Work}"
+                                   Placeholder="Voer beroep in"
+                                   BackgroundColor="#F9FAFB"
+                                   TextColor="#1F2937"
+                                   PlaceholderColor="#9CA3AF"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Save Button -->
+                    <Button Text="Profiel opslaan"
                             Command="{Binding SaveProfileCommand}"
                             BackgroundColor="#2563EB"
                             TextColor="White"
-                            CornerRadius="8"
-                            Margin="0,20,0,0"/>
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            HeightRequest="48"
+                            CornerRadius="10"
+                            Margin="0,8,0,0">
+                        <Button.Shadow>
+                            <Shadow Brush="#2563EB" Offset="0,4" Radius="8" Opacity="0.3"/>
+                        </Button.Shadow>
+                    </Button>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

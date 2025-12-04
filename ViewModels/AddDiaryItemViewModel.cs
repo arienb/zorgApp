@@ -125,8 +125,16 @@ namespace zorgApp.ViewModels
                 // Upload new image if selected
                 if (_selectedImageResult != null)
                 {
+                    // ⚠️ BELANGRIJKE WIJZIGING: Gebruik de bewaarde FileResult
                     using var stream = await _selectedImageResult.OpenReadAsync();
-                    imageUrl = await _firebaseService.UploadImageAsync(stream, $"{Guid.NewGuid()}.jpg");
+                    var memoryStream = new MemoryStream();
+                    await stream.CopyToAsync(memoryStream);
+                    memoryStream.Position = 0;
+                    
+                    var fileName = $"diary_{PatientId}_{DateTime.Now:yyyyMMddHHmmss}.jpg";
+                    imageUrl = await _firebaseService.UploadImageAsync(memoryStream, fileName);
+                    
+                    memoryStream.Dispose();
                 }
 
                 var combinedDateTime = Timestamp.Date + Time;
@@ -140,7 +148,7 @@ namespace zorgApp.ViewModels
                         PatientId = PatientId,
                         Title = Title,
                         Description = Description,
-                        ImageUrl = imageUrl,
+                        ImageUrl = imageUrl, // ✅ ImageUrl wordt nu correct opgeslagen
                         Timestamp = combinedDateTime,
                         CreatedBy = CreatedBy
                     };
@@ -156,7 +164,7 @@ namespace zorgApp.ViewModels
                         PatientId = PatientId,
                         Title = Title,
                         Description = Description,
-                        ImageUrl = imageUrl,
+                        ImageUrl = imageUrl, // ✅ ImageUrl wordt nu correct opgeslagen
                         Timestamp = combinedDateTime,
                         CreatedBy = CreatedBy
                     };
@@ -170,6 +178,7 @@ namespace zorgApp.ViewModels
             catch (Exception ex)
             {
                 await Shell.Current.DisplayAlert("Fout", $"Kon item niet opslaan: {ex.Message}", "OK");
+                System.Diagnostics.Debug.WriteLine($"SaveAsync Error: {ex}");
             }
             finally
             {
@@ -182,12 +191,25 @@ namespace zorgApp.ViewModels
         {
             try
             {
-                var result = await MediaPicker.PickPhotoAsync();
+                var result = await MediaPicker.PickPhotoAsync(new MediaPickerOptions
+                {
+                    Title = "Selecteer een foto"
+                });
 
                 if (result != null) 
                 {
                     _selectedImageResult = result;
-                    Image = ImageSource.FromStream(() => result.OpenReadAsync().Result);
+                    
+                    // ⚠️ BELANGRIJKE WIJZIGING: Bewaar stream ZONDER using statement
+                    var stream = await result.OpenReadAsync();
+                    var memoryStream = new MemoryStream();
+                    await stream.CopyToAsync(memoryStream);
+                    memoryStream.Position = 0;
+                    stream.Dispose(); // Sluit alleen de originele stream
+                    
+                    // Preview: Maak een NIEUWE copy voor de UI
+                    var previewStream = new MemoryStream(memoryStream.ToArray());
+                    Image = ImageSource.FromStream(() => previewStream);
                 }
             }
             catch (Exception ex)

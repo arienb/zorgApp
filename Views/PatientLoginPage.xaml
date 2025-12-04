@@ -45,7 +45,7 @@
 
                 <Entry 
                     Text="{Binding UniqueCode}"
-                    Placeholder="Bijv. ABC123"
+                    Placeholder="..."
                     FontSize="18"
                     HorizontalTextAlignment="Center"
                     MaxLength="6"

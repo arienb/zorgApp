@@ -103,7 +103,8 @@ namespace zorgApp.Services
                     patient.Email,
                     patient.Age,
                     patient.RoomNumber,
-                    patient.UniqueCode
+                    patient.UniqueCode,
+                    patient.ProfileImageUrl
                 };
 
                 var response = await _httpClient.PostAsJsonAsync($"/{PatientsNode}.json", patientData);
@@ -133,7 +134,8 @@ namespace zorgApp.Services
                     patient.Email,
                     patient.Age,
                     patient.RoomNumber,
-                    patient.UniqueCode
+                    patient.UniqueCode,
+                    patient.ProfileImageUrl
                 };
 
                 var json = JsonSerializer.Serialize(toUpdate);
@@ -148,24 +150,38 @@ namespace zorgApp.Services
             }
         }
 
-        public async Task UpdatePatientProfileAsync(string id, Patient patient) 
+        public async Task UpdatePatientProfileAsync(string id, Patient patient, Stream? imageStream = null, string? fileName = null) 
         {
             try
             {
+                // Upload profile image if provided
+                if (imageStream != null && !string.IsNullOrEmpty(fileName))
+                {
+                    var imageUrl = await UploadImageAsync(imageStream, $"profiles/{fileName}");
+                    patient.ProfileImageUrl = imageUrl;
+                }
+
                 var toUpdate = new
                 {
+                    patient.Name,
+                    patient.Email,
+                    patient.Age,
+                    patient.RoomNumber,
+                    patient.UniqueCode,
                     patient.CallName,
                     patient.Hobbies,
                     patient.Work,
                     patient.FavoriteFood,
                     patient.FavoriteFilm,
-                    patient.FavoriteMusic
+                    patient.FavoriteMusic,
+                    patient.ProfileImageUrl
                 };
 
                 var json = JsonSerializer.Serialize(toUpdate);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PatchAsync($"/{PatientsNode}/{id}.json", content);
+                // ⚠️ BELANGRIJKE WIJZIGING: Gebruik PUT in plaats van PATCH
+                var response = await _httpClient.PutAsync($"/{PatientsNode}/{id}.json", content);
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
@@ -173,7 +189,6 @@ namespace zorgApp.Services
                 System.Diagnostics.Debug.WriteLine($"Firebase UpdatePatientProfile Error: {ex.Message}");
                 throw;
             }
-
         }
 
         public async Task DeletePatientAsync(string id)
