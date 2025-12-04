@@ -34,13 +34,16 @@ namespace zorgApp.ViewModels
         [RelayCommand]
         private async Task SaveProfileAsync()
         {
-            await _firebaseService.UpdatePatientProfileAsync(Patient.FirebaseId, Patient);
-            IsEditingCallName = false;
-            IsEditingHobbies = false;
-            IsEditingFood = false;
-            IsEditingFilm = false;
-            IsEditingMusic = false;
-            IsEditingWork = false;
+            try
+            {
+                await _firebaseService.UpdatePatientProfileAsync(Patient.FirebaseId, Patient);
+                await Shell.Current.DisplayAlert("Succes", "Profiel opgeslagen", "OK");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"SaveProfileAsync Error: {ex.Message}");
+                await Shell.Current.DisplayAlert("Fout", "Opslaan mislukt", "OK");
+            }
         }
     }
 }
