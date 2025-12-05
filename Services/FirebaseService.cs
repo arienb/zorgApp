@@ -381,6 +381,65 @@ namespace zorgApp.Services
             }
         }
 
+
+        // -------------------------------------- 
+        //  NOTIFICATIONS
+        // -------------------------------------- 
+        public async Task AddOrReplaceNotificationAsync(Notification notification)
+        {
+            var json = JsonSerializer.Serialize(notification);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PutAsync($"/{PatientsNode}/{notification.PatientId}/notification.json", content);
+            response.EnsureSuccessStatusCode();
+        }
+        /* pushnotification (latere implementatie)
+        public async Task SendPushNotificationAsync(Notification notification)
+        {
+            var payload = new
+            {
+                to = notification.PatientFamilyDeviceToken,
+                notification = new
+                {
+                    title = "Nieuwe notificatie",
+                    body = notification.Message
+                }
+            };
+
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("key", "YOUR_FCM_SERVER_KEY");
+
+            var response = await _httpClient.PostAsync("https://fcm.googleapis.com/fcm/send", content);
+            response.EnsureSuccessStatusCode();
+        }
+        */
+        public async Task<Notification?> GetNotificationAsync(string patientId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"/{PatientsNode}/{patientId}/notification.json");
+                response.EnsureSuccessStatusCode();
+
+                var json = await response.Content.ReadAsStringAsync();
+
+                if (string.IsNullOrWhiteSpace(json) || json == "null")
+                    return null;
+
+                var notification = JsonSerializer.Deserialize<Notification>(json,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return notification;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase GetNotification Error: {ex.Message}");
+                return null;
+            }
+        }
+
         // -------------------------------------- 
         //  HELPER METHODS
         // -------------------------------------- 

@@ -22,6 +22,9 @@ namespace zorgApp.ViewModels
         private string patientName = string.Empty;
 
         [ObservableProperty]
+        private Notification? notification;
+
+        [ObservableProperty]
         private bool isRefreshing;
 
         public ObservableCollection<DiaryItem> DiaryItems { get; set; }
@@ -44,6 +47,7 @@ namespace zorgApp.ViewModels
         {
             await LoadPatientNameAsync();
             await LoadDiaryItemsAsync();
+            Notification = await _firebaseService.GetNotificationAsync(PatientId);
         }
 
         private async Task LoadPatientNameAsync()
@@ -144,6 +148,37 @@ namespace zorgApp.ViewModels
         private async Task GoBackCommand()
         {
             await Shell.Current.GoToAsync("..");
+        }
+
+        //------- enkel voor verpleging -------//
+        [RelayCommand]
+        private async Task AddOrReplaceNotificationAsync()
+        {
+            if (string.IsNullOrEmpty(PatientId))
+            {
+                await Shell.Current.DisplayAlert("Fout", "Geen patiënt geselecteerd", "OK");
+                return;
+            }
+
+            // Voorbeeld: vraag de gebruiker om een bericht in te geven
+            string message = await Shell.Current.DisplayPromptAsync("Nieuwe notificatie", "Voer bericht in:");
+
+            if (string.IsNullOrWhiteSpace(message))
+                return;
+
+            var notification = new Notification
+            {
+                PatientId = PatientId,
+                Message = message,
+                Timestamp = DateTime.UtcNow
+            };
+
+            await _firebaseService.AddOrReplaceNotificationAsync(notification);
+
+            // Push triggeren
+            //await _firebaseService.SendPushNotificationAsync(notification);
+
+            await LoadPatientAndDiaryItemsAsync();
         }
     }
 }
