@@ -178,7 +178,7 @@ namespace zorgApp.ViewModels
             // Push triggeren
             //await _firebaseService.SendPushNotificationAsync(notification);
 
-            await LoadPatientAndDiaryItemsAsync();
+            Notification = await _firebaseService.GetNotificationAsync(PatientId);
         }
     }
 }
