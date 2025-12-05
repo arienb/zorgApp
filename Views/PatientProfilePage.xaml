@@ -194,7 +194,19 @@
                                    TextColor="#1F2937"
                                    PlaceholderColor="#9CA3AF"/>
                         </VerticalStackLayout>
-
+                        <!-- Email -->
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="E-mail" 
+                                   FontSize="13" 
+                                   TextColor="#6B7280"
+                                   FontAttributes="Bold"/>
+                            <Entry Text="{Binding Patient.Email}"
+                                   Placeholder="Voer de email van de patiënt in"
+                                   BackgroundColor="#F9FAFB"
+                                   TextColor="#1F2937"
+                                   PlaceholderColor="#9CA3AF"/>
+                        </VerticalStackLayout>
+                        
                         <!-- Hobbies -->
                         <VerticalStackLayout Spacing="6">
                             <Label Text="Hobby's" 
