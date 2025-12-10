@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:zorgApp.ViewModels"
-             x:Class="zorgApp.Views.DiaryPageDetailsView"
+             x:Class="zorgApp.Views.DiaryItemDetailsPage"
              x:DataType="viewmodels:DiaryPageDetailsViewModel"
              xmlns:converters="clr-namespace:zorgApp.Converters"
              Title="{Binding DiaryItem.Title}"

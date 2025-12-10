@@ -119,7 +119,7 @@
                            Margin="0,0,0,8"/>
 
                     <!-- Info Grid -->
-                    <Grid RowDefinitions="Auto,Auto,Auto" 
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto" 
                           ColumnDefinitions="Auto,*"
                           RowSpacing="12"
                           ColumnSpacing="12">
@@ -146,13 +146,24 @@
                                TextColor="#1F2937"
                                VerticalOptions="Center"/>
 
-                        <!-- Unique Code -->
+                        <!-- Department Name -->
                         <Label Grid.Row="2" Grid.Column="0" 
-                               Text="Unieke code:" 
+                               Text="Afdeling:" 
                                FontAttributes="Bold"
                                TextColor="#4B5563"
                                VerticalOptions="Center"/>
                         <Label Grid.Row="2" Grid.Column="1" 
+                               Text="{Binding Patient.DepartmentName, TargetNullValue='Niet toegewezen', FallbackValue='Niet toegewezen'}" 
+                               TextColor="#1F2937"
+                               VerticalOptions="Center"/>
+
+                        <!-- Unique Code -->
+                        <Label Grid.Row="3" Grid.Column="0" 
+                               Text="Unieke code:" 
+                               FontAttributes="Bold"
+                               TextColor="#4B5563"
+                               VerticalOptions="Center"/>
+                        <Label Grid.Row="3" Grid.Column="1" 
                                Text="{Binding Patient.UniqueCode}" 
                                TextColor="#1F2937"
                                FontFamily="Courier"

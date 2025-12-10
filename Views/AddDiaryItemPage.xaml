@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:zorgApp.ViewModels"
              xmlns:converters="clr-namespace:zorgApp.Converters"
-             x:Class="zorgApp.Views.AddDiaryItemView"
+             x:Class="zorgApp.Views.AddDiaryItemPage"
              x:DataType="viewmodels:AddDiaryItemViewModel"
              Title="{Binding IsEditMode, Converter={StaticResource DiaryItemEditModeTitleConverter}}"
              BackgroundColor="#F5F7FA">

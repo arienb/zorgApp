@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using zorgApp.Models;
 using zorgApp.Services;
 
@@ -16,6 +17,9 @@ public partial class PatientSelectionScreenViewModel : ObservableObject
     [ObservableProperty]
     private bool isRefreshing;
 
+    [ObservableProperty]
+    private string currentDepartment = string.Empty;
+
     public ObservableCollection<Patient> Patients { get; } = new();
 
     public PatientSelectionScreenViewModel(FirebaseService firebaseService)
@@ -29,11 +33,14 @@ public partial class PatientSelectionScreenViewModel : ObservableObject
         EditPatientCommand = new AsyncRelayCommand<Patient>(EditPatientAsync);
         LogoutCommand = new AsyncRelayCommand(LogoutAsync);
 
-        // Subscribe to PatientAdded message
-        MessagingCenter.Subscribe<NewPatientViewModel>(this, "PatientAdded", async (sender) =>
+        // Gebruik WeakReferenceMessenger in plaats van MessagingCenter
+        WeakReferenceMessenger.Default.Register<PatientAddedMessage>(this, async (recipient, message) =>
         {
             await LoadPatientsAsync();
         });
+
+        // Get current department from preferences
+        CurrentDepartment = Preferences.Get("CurrentDepartment", string.Empty);
 
         Task.Run(async () => await LoadPatientsAsync());
     }
@@ -54,16 +61,35 @@ public partial class PatientSelectionScreenViewModel : ObservableObject
             IsBusy = true;
             IsRefreshing = true;
 
-            var patientsFromFirebase = await _firebaseService.GetPatientsAsync();
-            System.Diagnostics.Debug.WriteLine($"Loaded {patientsFromFirebase.Count} patients from Firebase");
+            // Get current department from preferences
+            CurrentDepartment = Preferences.Get("CurrentDepartment", string.Empty);
 
-            Patients.Clear();
-            foreach (var p in patientsFromFirebase)
-                Patients.Add(p);
+            if (string.IsNullOrEmpty(CurrentDepartment))
+            {
+                System.Diagnostics.Debug.WriteLine("No department set - loading all patients");
+                var allPatients = await _firebaseService.GetPatientsAsync();
+                
+                Patients.Clear();
+                foreach (var p in allPatients)
+                    Patients.Add(p);
+                    
+                System.Diagnostics.Debug.WriteLine($"Loaded {allPatients.Count} patients (no department filter)");
+            }
+            else
+            {
+                // Load only patients from current department
+                var patientsFromFirebase = await _firebaseService.GetPatientsByDepartmentAsync(CurrentDepartment);
+                System.Diagnostics.Debug.WriteLine($"Loaded {patientsFromFirebase.Count} patients from department: {CurrentDepartment}");
+
+                Patients.Clear();
+                foreach (var p in patientsFromFirebase)
+                    Patients.Add(p);
+            }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error loading patients: {ex.Message}");
+            await Shell.Current.DisplayAlert("Fout", $"Kon patiënten niet laden: {ex.Message}", "OK");
         }
         finally
         {
@@ -76,11 +102,11 @@ public partial class PatientSelectionScreenViewModel : ObservableObject
     {
         try
         {
-            await Shell.Current.GoToAsync("NewPatientView");
+            await Shell.Current.GoToAsync("NewPatientPage");
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error navigating to NewPatientView: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"Error navigating to NewPatientPage: {ex.Message}");
             await Shell.Current.DisplayAlert("Fout", $"Kon niet navigeren naar nieuwe patiënt pagina: {ex.Message}", "OK");
         }
     }
@@ -92,7 +118,7 @@ public partial class PatientSelectionScreenViewModel : ObservableObject
 
         try
         {
-            await Shell.Current.GoToAsync($"NewPatientView?PatientId={patient.FirebaseId}");
+            await Shell.Current.GoToAsync($"NewPatientPage?PatientId={patient.FirebaseId}");
         }
         catch (Exception ex)
         {
@@ -134,7 +160,7 @@ public partial class PatientSelectionScreenViewModel : ObservableObject
     {
         if (patient == null) return;
 
-        await Shell.Current.GoToAsync($"DiaryPage?PatientId={patient.FirebaseId}");
+        await Shell.Current.GoToAsync($"DiaryItemsPage?PatientId={patient.FirebaseId}");
     }
 
     private async Task LogoutAsync()
@@ -150,6 +176,9 @@ public partial class PatientSelectionScreenViewModel : ObservableObject
 
         try
         {
+            // Clear department preference
+            Preferences.Remove("CurrentDepartment");
+            
             await Shell.Current.GoToAsync("//StartupSelectionPage");
         }
         catch (Exception ex)

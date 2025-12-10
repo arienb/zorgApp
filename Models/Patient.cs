@@ -13,6 +13,7 @@ namespace zorgApp.Models
         public int Age { get; set; }
         public string RoomNumber { get; set; } = string.Empty;
         public string UniqueCode { get; set; } = string.Empty;
+        public string? DepartmentName { get; set; }
         
         // Profile fields
         public string? CallName { get; set; }

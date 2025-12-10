@@ -43,7 +43,7 @@ public partial class PatientLoginViewModel : ObservableObject
             if (patient != null)
             {
                 // Navigate to diary page with patient ID
-                await Shell.Current.GoToAsync($"DiaryPage?PatientId={patient.FirebaseId}");
+                await Shell.Current.GoToAsync($"DiaryItemsPage?PatientId={patient.FirebaseId}");
             }
             else
             {

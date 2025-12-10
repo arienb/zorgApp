@@ -77,7 +77,7 @@ namespace zorgApp.ViewModels
                 return;
             }
 
-            await Shell.Current.GoToAsync($"{nameof(Views.AddDiaryItemView)}?PatientId={PatientId}");
+            await Shell.Current.GoToAsync($"AddDiaryItemPage?PatientId={PatientId}");
         }
 
         [RelayCommand]
@@ -118,7 +118,7 @@ namespace zorgApp.ViewModels
 
             System.Diagnostics.Debug.WriteLine($"ItemTapped - Navigating with ID: {item.Id}");
             
-            await Shell.Current.GoToAsync($"{nameof(Views.DiaryPageDetailsView)}?PatientId={PatientId}&ItemId={item.Id}");
+            await Shell.Current.GoToAsync($"DiaryItemDetailsPage?PatientId={PatientId}&ItemId={item.Id}");
         }
 
         [RelayCommand]
@@ -138,7 +138,7 @@ namespace zorgApp.ViewModels
                 return;
             }
 
-            await Shell.Current.GoToAsync(nameof(Views.PatientProfilePage), new Dictionary<string, object>
+            await Shell.Current.GoToAsync("PatientProfilePage", new Dictionary<string, object>
             {
                 ["Patient"] = patient
             });

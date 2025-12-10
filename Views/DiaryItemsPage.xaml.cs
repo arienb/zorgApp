@@ -2,9 +2,9 @@
 
 namespace zorgApp.Views
 {
-    public partial class DiaryPage : ContentPage
+    public partial class DiaryItemsPage : ContentPage
     {
-        public DiaryPage(DiaryPageViewModel viewModel)
+        public DiaryItemsPage(DiaryPageViewModel viewModel)
         {
             InitializeComponent();
             BindingContext = viewModel;

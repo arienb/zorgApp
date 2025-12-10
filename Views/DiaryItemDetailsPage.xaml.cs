@@ -2,11 +2,11 @@ using zorgApp.ViewModels;
 
 namespace zorgApp.Views;
 
-public partial class DiaryPageDetailsView : ContentPage
+public partial class DiaryItemDetailsPage : ContentPage
 {
     private readonly DiaryPageDetailsViewModel _viewModel;
 
-    public DiaryPageDetailsView(DiaryPageDetailsViewModel viewModel)
+    public DiaryItemDetailsPage(DiaryPageDetailsViewModel viewModel)
     {
         InitializeComponent();
         BindingContext = viewModel;

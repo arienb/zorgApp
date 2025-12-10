@@ -4,7 +4,7 @@
              xmlns:viewmodels="clr-namespace:zorgApp.ViewModels"
              xmlns:models="clr-namespace:zorgApp.Models"
              xmlns:converters="clr-namespace:zorgApp.Converters"
-             x:Class="zorgApp.Views.DiaryPage"
+             x:Class="zorgApp.Views.DiaryItemsPage"
              x:DataType="viewmodels:DiaryPageViewModel"
              Title="{Binding PatientName, StringFormat='Dagboek {0}'}"
              BackgroundColor="#F5F7FA">

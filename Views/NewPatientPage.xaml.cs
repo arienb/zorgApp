@@ -3,7 +3,7 @@ using zorgApp.ViewModels;
 namespace zorgApp.Views;
 
 [QueryProperty(nameof(PatientId), nameof(PatientId))]
-public partial class NewPatientView : ContentPage
+public partial class NewPatientPage : ContentPage
 {
     private readonly NewPatientViewModel _viewModel;
     private string? _patientId;
@@ -21,7 +21,7 @@ public partial class NewPatientView : ContentPage
         }
     }
 
-    public NewPatientView(NewPatientViewModel viewModel)
+    public NewPatientPage(NewPatientViewModel viewModel)
     {
         InitializeComponent();
         _viewModel = viewModel;

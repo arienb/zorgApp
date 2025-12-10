@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:zorgApp.ViewModels"
-             x:Class="zorgApp.Views.NewPatientView"
+             x:Class="zorgApp.Views.NewPatientPage"
              x:DataType="viewModels:NewPatientViewModel"
              Title="{Binding IsEditMode, Converter={StaticResource EditModeTitleConverter}}"
              BackgroundColor="#F5F7FA">
@@ -29,6 +29,21 @@
                                FontAttributes="Bold"/>
                         <Entry Text="{Binding Name}"
                                Placeholder="Voer naam in"
+                               BackgroundColor="#F9FAFB"
+                               TextColor="#1F2937"
+                               PlaceholderColor="#9CA3AF"
+                               IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
+                    </VerticalStackLayout>
+
+                    <!-- Email -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Email*" 
+                               FontSize="13" 
+                               TextColor="#6B7280"
+                               FontAttributes="Bold"/>
+                        <Entry Text="{Binding Email}"
+                               Placeholder="Voer email in"
+                               Keyboard="Email"
                                BackgroundColor="#F9FAFB"
                                TextColor="#1F2937"
                                PlaceholderColor="#9CA3AF"

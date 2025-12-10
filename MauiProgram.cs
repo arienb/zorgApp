@@ -30,17 +30,19 @@ namespace zorgApp
             builder.Services.AddTransient<StartupSelectionViewModel>();
             builder.Services.AddTransient<PatientSelectionScreenViewModel>();
             builder.Services.AddTransient<PatientLoginViewModel>();
+            builder.Services.AddTransient<NurseLoginViewModel>();
             builder.Services.AddTransient<NewPatientViewModel>();
             builder.Services.AddTransient<PatientProfileViewModel>();
 
             // Register Views
-            builder.Services.AddTransient<DiaryPage>();
-            builder.Services.AddTransient<AddDiaryItemView>();
-            builder.Services.AddTransient<DiaryPageDetailsView>();
+            builder.Services.AddTransient<DiaryItemsPage>();
+            builder.Services.AddTransient<AddDiaryItemPage>();
+            builder.Services.AddTransient<DiaryItemDetailsPage>();
             builder.Services.AddTransient<StartupSelectionPage>();
-            builder.Services.AddTransient<PatientSelectionScreen>();
+            builder.Services.AddTransient<PatientSelectionPage>();
             builder.Services.AddTransient<PatientLoginPage>();
-            builder.Services.AddTransient<NewPatientView>();
+            builder.Services.AddTransient<NurseLoginPage>();
+            builder.Services.AddTransient<NewPatientPage>();
             builder.Services.AddTransient<PatientProfilePage>();
 
 

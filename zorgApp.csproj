@@ -67,25 +67,40 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Views\DiaryPage.xaml.cs">
-	    <DependentUpon>DiaryPage.xaml</DependentUpon>
+	  <Compile Update="Views\AddDiaryItemPage.xaml.cs">
+	    <DependentUpon>AddDiaryItemPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\DiaryItemsPage.xaml.cs">
+	    <DependentUpon>DiaryItemsPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\DiaryItemDetailsPage.xaml.cs">
+	    <DependentUpon>DiaryItemDetailsPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\NewPatientPage.xaml.cs">
+	    <DependentUpon>NewPatientPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\PatientSelectionPage.xaml.cs">
+	    <DependentUpon>PatientSelectionPage.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Views\AddDiaryItemView.xaml">
+	  <MauiXaml Update="Views\AddDiaryItemPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\DiaryPageDetailsView.xaml">
+	  <MauiXaml Update="Views\DiaryItemDetailsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\NewPatientView.xaml">
+	  <MauiXaml Update="Views\NewPatientPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\NurseLoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\PatientLoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\PatientSelectionScreen.xaml">
+	  <MauiXaml Update="Views\PatientSelectionPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\StartupSelectionPage.xaml">

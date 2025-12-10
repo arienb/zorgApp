@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using zorgApp.Models;
 using zorgApp.Services;
 
@@ -108,6 +109,9 @@ public partial class NewPatientViewModel : ObservableObject
 
         try
         {
+            // Get current department from preferences
+            var currentDepartment = Preferences.Get("CurrentDepartment", string.Empty);
+
             if (IsEditMode && !string.IsNullOrEmpty(PatientId))
             {
                 // Update existing patient
@@ -117,7 +121,8 @@ public partial class NewPatientViewModel : ObservableObject
                     Name = Name,
                     Email = Email,
                     Age = parsedAge,
-                    RoomNumber = RoomNumber
+                    RoomNumber = RoomNumber,
+                    DepartmentName = currentDepartment
                 };
 
                 // Get the existing patient to preserve UniqueCode
@@ -144,7 +149,8 @@ public partial class NewPatientViewModel : ObservableObject
                     Name = Name,
                     Email = Email,
                     Age = parsedAge,
-                    RoomNumber = RoomNumber
+                    RoomNumber = RoomNumber,
+                    DepartmentName = currentDepartment
                 };
 
                 var firebaseId = await _firebaseService.AddPatientAsync(newPatient);
@@ -161,8 +167,8 @@ public partial class NewPatientViewModel : ObservableObject
                 }
             }
 
-            // Navigate terug en refresh de patiëntenlijst
-            MessagingCenter.Send(this, "PatientAdded");
+            // Gebruik WeakReferenceMessenger in plaats van MessagingCenter
+            WeakReferenceMessenger.Default.Send(new PatientAddedMessage());
             await Shell.Current.GoToAsync("..");
         }
         catch (Exception ex)
@@ -182,3 +188,6 @@ public partial class NewPatientViewModel : ObservableObject
         await Shell.Current.GoToAsync("..");
     }
 }
+
+// Message class voor WeakReferenceMessenger
+public class PatientAddedMessage { }

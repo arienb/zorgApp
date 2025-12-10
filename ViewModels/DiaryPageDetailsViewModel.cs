@@ -89,7 +89,7 @@ namespace zorgApp.ViewModels
         {
             if (DiaryItem != null)
             {
-                await Shell.Current.GoToAsync($"AddDiaryItemView?PatientId={PatientId}&DiaryItemId={DiaryItem.Id}");
+                await Shell.Current.GoToAsync($"AddDiaryItemPage?PatientId={PatientId}&DiaryItemId={DiaryItem.Id}");
             }
         }
 

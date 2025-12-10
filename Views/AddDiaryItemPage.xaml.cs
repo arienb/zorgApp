@@ -2,9 +2,9 @@ using zorgApp.ViewModels;
 
 namespace zorgApp.Views;
 
-public partial class AddDiaryItemView : ContentPage
+public partial class AddDiaryItemPage : ContentPage
 {
-	public AddDiaryItemView(AddDiaryItemViewModel viewModel)
+	public AddDiaryItemPage(AddDiaryItemViewModel viewModel)
 	{
 		InitializeComponent();
 		BindingContext = viewModel;

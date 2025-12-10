@@ -21,6 +21,7 @@ namespace zorgApp.Services
             "https://zorgapp-316e8-default-rtdb.europe-west1.firebasedatabase.app/";
 
         private const string BaseNode = "zorgApp";
+        private const string DepartmentsNode = $"{BaseNode}/departments";
         private const string PatientsNode = $"{BaseNode}/patients";
 
         public FirebaseService()
@@ -34,7 +35,117 @@ namespace zorgApp.Services
         }
 
         // -------------------------------------- 
-        //  PATIENTS CRUD
+        //  DEPARTMENTS / NURSES CRUD
+        // -------------------------------------- 
+
+        public async Task<List<Nurse>> GetDepartmentsAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"/{DepartmentsNode}.json");
+                if (!response.IsSuccessStatusCode)
+                    return new List<Nurse>();
+
+                var content = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrWhiteSpace(content) || content == "null")
+                    return new List<Nurse>();
+
+                var departments =
+                    JsonSerializer.Deserialize<Dictionary<string, Nurse>>(
+                        content,
+                        _jsonOptions
+                    );
+                if (departments == null)
+                    return new List<Nurse>();
+
+                var list = new List<Nurse>();
+                foreach (var kvp in departments)
+                {
+                    var dept = kvp.Value;
+                    dept.FirebaseId = kvp.Key;
+                    list.Add(dept);
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase GetDepartments Error: {ex.Message}");
+                return new List<Nurse>();
+            }
+        }
+
+        public async Task<Nurse?> GetDepartmentByNameAsync(string departmentName)
+        {
+            try
+            {
+                var allDepartments = await GetDepartmentsAsync();
+                return allDepartments.FirstOrDefault(d => 
+                    d.DepartmentName?.Equals(departmentName, StringComparison.OrdinalIgnoreCase) == true);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase GetDepartmentByName Error: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task<string?> AddDepartmentAsync(Nurse nurse)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"AddDepartmentAsync called for: {nurse.DepartmentName}");
+                
+                var departmentData = new
+                {
+                    nurse.DepartmentName,
+                    nurse.Password,
+                    nurse.CreatedAt
+                };
+
+                var json = JsonSerializer.Serialize(departmentData);
+                System.Diagnostics.Debug.WriteLine($"JSON to send: {json}");
+
+                var response = await _httpClient.PostAsJsonAsync($"/{DepartmentsNode}.json", departmentData);
+                
+                System.Diagnostics.Debug.WriteLine($"Response status: {response.StatusCode}");
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    System.Diagnostics.Debug.WriteLine($"Error response: {errorContent}");
+                    return null;
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Success response: {content}");
+                
+                var result = JsonSerializer.Deserialize<FirebasePostResponse>(content);
+                return result?.Name;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase AddDepartment Error: {ex}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                throw; // Re-throw om de exception in ViewModel op te vangen
+            }
+        }
+
+        public async Task<bool> ValidateDepartmentCredentialsAsync(string departmentName, string password)
+        {
+            try
+            {
+                var department = await GetDepartmentByNameAsync(departmentName);
+                return department != null && department.Password == password;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase ValidateDepartmentCredentials Error: {ex.Message}");
+                return false;
+            }
+        }
+
+        // -------------------------------------- 
+        //  PATIENTS CRUD (per afdeling)
         // -------------------------------------- 
 
         public async Task<List<Patient>> GetPatientsAsync()
@@ -73,6 +184,22 @@ namespace zorgApp.Services
             }
         }
 
+        public async Task<List<Patient>> GetPatientsByDepartmentAsync(string departmentName)
+        {
+            try
+            {
+                var allPatients = await GetPatientsAsync();
+                return allPatients.Where(p => 
+                    p.DepartmentName?.Equals(departmentName, StringComparison.OrdinalIgnoreCase) == true)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase GetPatientsByDepartment Error: {ex.Message}");
+                return new List<Patient>();
+            }
+        }
+
         public async Task<Patient?> GetPatientByUniqueCodeAsync(string uniqueCode)
         {
             try
@@ -104,7 +231,8 @@ namespace zorgApp.Services
                     patient.Age,
                     patient.RoomNumber,
                     patient.UniqueCode,
-                    patient.ProfileImageUrl
+                    patient.ProfileImageUrl,
+                    patient.DepartmentName
                 };
 
                 var response = await _httpClient.PostAsJsonAsync($"/{PatientsNode}.json", patientData);
@@ -135,7 +263,8 @@ namespace zorgApp.Services
                     patient.Age,
                     patient.RoomNumber,
                     patient.UniqueCode,
-                    patient.ProfileImageUrl
+                    patient.ProfileImageUrl,
+                    patient.DepartmentName
                 };
 
                 var json = JsonSerializer.Serialize(toUpdate);
@@ -174,7 +303,8 @@ namespace zorgApp.Services
                     patient.FavoriteFood,
                     patient.FavoriteFilm,
                     patient.FavoriteMusic,
-                    patient.ProfileImageUrl
+                    patient.ProfileImageUrl,
+                    patient.DepartmentName
                 };
 
                 var json = JsonSerializer.Serialize(toUpdate);
@@ -448,6 +578,14 @@ namespace zorgApp.Services
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var random = new Random();
             return new string(Enumerable.Repeat(chars, 6)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        public string GeneratePassword()
+        {
+            const string chars = "0123456789";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, 4)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 

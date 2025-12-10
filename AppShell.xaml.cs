@@ -8,12 +8,13 @@ namespace zorgApp
         {
             InitializeComponent();
 
-            Routing.RegisterRoute(nameof(AddDiaryItemView), typeof(AddDiaryItemView));
-            Routing.RegisterRoute(nameof(DiaryPageDetailsView), typeof(DiaryPageDetailsView));
-            Routing.RegisterRoute(nameof(DiaryPage), typeof(DiaryPage));
-            Routing.RegisterRoute(nameof(PatientSelectionScreen), typeof(PatientSelectionScreen));
+            Routing.RegisterRoute(nameof(AddDiaryItemPage), typeof(AddDiaryItemPage));
+            Routing.RegisterRoute(nameof(DiaryItemDetailsPage), typeof(DiaryItemDetailsPage));
+            Routing.RegisterRoute(nameof(DiaryItemsPage), typeof(DiaryItemsPage));
+            Routing.RegisterRoute(nameof(PatientSelectionPage), typeof(PatientSelectionPage));
             Routing.RegisterRoute(nameof(PatientLoginPage), typeof(PatientLoginPage));
-            Routing.RegisterRoute(nameof(NewPatientView), typeof(NewPatientView));
+            Routing.RegisterRoute(nameof(NurseLoginPage), typeof(NurseLoginPage));
+            Routing.RegisterRoute(nameof(NewPatientPage), typeof(NewPatientPage));
             Routing.RegisterRoute(nameof(PatientProfilePage), typeof(PatientProfilePage));
         }
     }
