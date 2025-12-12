@@ -7,7 +7,7 @@
     xmlns:models="clr-namespace:zorgApp.Models"
     x:Class="zorgApp.Views.PatientSelectionPage"
     x:DataType="viewmodels:PatientSelectionScreenViewModel"
-    Title="Patiënten"
+    Title="{Binding CurrentDepartment, StringFormat='Patiënten {0}'}"
     BackgroundColor="#F5F7FA"
     Shell.NavBarIsVisible="True">
 

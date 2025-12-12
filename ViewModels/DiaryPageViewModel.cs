@@ -27,12 +27,18 @@ namespace zorgApp.ViewModels
         [ObservableProperty]
         private bool isRefreshing;
 
+        [ObservableProperty]
+        private bool isNurseMode;
+
         public ObservableCollection<DiaryItem> DiaryItems { get; set; }
 
         public DiaryPageViewModel(FirebaseService firebaseService)
         {
             _firebaseService = firebaseService;
             DiaryItems = new ObservableCollection<DiaryItem>();
+            
+            // Check if logged in as nurse (has CurrentDepartment preference)
+            IsNurseMode = !string.IsNullOrEmpty(Preferences.Get("CurrentDepartment", string.Empty));
         }
 
         partial void OnPatientIdChanged(string value)
@@ -170,15 +176,60 @@ namespace zorgApp.ViewModels
             {
                 PatientId = PatientId,
                 Message = message,
-                Timestamp = DateTime.UtcNow
+                Timestamp = DateTime.UtcNow,
+                IsRead = false
             };
 
             await _firebaseService.AddOrReplaceNotificationAsync(notification);
 
-            // Push triggeren
-            //await _firebaseService.SendPushNotificationAsync(notification);
-
             Notification = await _firebaseService.GetNotificationAsync(PatientId);
+            
+            await Shell.Current.DisplayAlert("Succes", "Notificatie verzonden!", "OK");
+        }
+
+        //------- voor patiënt/familie -------//
+        [RelayCommand]
+        private async Task MarkNotificationAsReadAsync()
+        {
+            if (Notification == null || string.IsNullOrEmpty(PatientId))
+                return;
+
+            try
+            {
+                await _firebaseService.MarkNotificationAsReadAsync(PatientId);
+                Notification = await _firebaseService.GetNotificationAsync(PatientId);
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Fout", $"Kon notificatie niet markeren als gelezen: {ex.Message}", "OK");
+            }
+        }
+
+        [RelayCommand]
+        private async Task DeleteNotificationAsync()
+        {
+            if (Notification == null || string.IsNullOrEmpty(PatientId))
+                return;
+
+            bool confirm = await Shell.Current.DisplayAlert(
+                "Verwijderen",
+                "Weet je zeker dat je deze notificatie wilt verwijderen?",
+                "Ja",
+                "Nee"
+            );
+
+            if (!confirm)
+                return;
+
+            try
+            {
+                await _firebaseService.DeleteNotificationAsync(PatientId);
+                Notification = null;
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Fout", $"Kon notificatie niet verwijderen: {ex.Message}", "OK");
+            }
         }
     }
 }

@@ -523,29 +523,7 @@ namespace zorgApp.Services
             var response = await _httpClient.PutAsync($"/{PatientsNode}/{notification.PatientId}/notification.json", content);
             response.EnsureSuccessStatusCode();
         }
-        /* pushnotification (latere implementatie)
-        public async Task SendPushNotificationAsync(Notification notification)
-        {
-            var payload = new
-            {
-                to = notification.PatientFamilyDeviceToken,
-                notification = new
-                {
-                    title = "Nieuwe notificatie",
-                    body = notification.Message
-                }
-            };
 
-            var json = JsonSerializer.Serialize(payload);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("key", "YOUR_FCM_SERVER_KEY");
-
-            var response = await _httpClient.PostAsync("https://fcm.googleapis.com/fcm/send", content);
-            response.EnsureSuccessStatusCode();
-        }
-        */
         public async Task<Notification?> GetNotificationAsync(string patientId)
         {
             try
@@ -570,6 +548,61 @@ namespace zorgApp.Services
             }
         }
 
+        public async Task MarkNotificationAsReadAsync(string patientId)
+        {
+            try
+            {
+                var notification = await GetNotificationAsync(patientId);
+                if (notification != null)
+                {
+                    notification.IsRead = true;
+                    await AddOrReplaceNotificationAsync(notification);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase MarkNotificationAsRead Error: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task DeleteNotificationAsync(string patientId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"/{PatientsNode}/{patientId}/notification.json");
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase DeleteNotification Error: {ex.Message}");
+                throw;
+            }
+        }
+
+        /* pushnotification (latere implementatie)
+        public async Task SendPushNotificationAsync(Notification notification)
+        {
+            var payload = new
+            {
+                to = notification.PatientFamilyDeviceToken,
+                notification = new
+                {
+                    title = "Nieuwe notificatie",
+                    body = notification.Message
+                }
+            };
+
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("key", "YOUR_FCM_SERVER_KEY");
+
+            var response = await _httpClient.PostAsync("https://fcm.googleapis.com/fcm/send", content);
+            response.EnsureSuccessStatusCode();
+        }
+        */
         // -------------------------------------- 
         //  HELPER METHODS
         // -------------------------------------- 
