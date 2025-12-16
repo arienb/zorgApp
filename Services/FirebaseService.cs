@@ -513,64 +513,152 @@ namespace zorgApp.Services
 
 
         // -------------------------------------- 
-        //  NOTIFICATIONS
+        //  NOTIFICATIONS (MEERDERE PER PATIËNT)
         // -------------------------------------- 
-        public async Task AddOrReplaceNotificationAsync(Notification notification)
-        {
-            var json = JsonSerializer.Serialize(notification);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PutAsync($"/{PatientsNode}/{notification.PatientId}/notification.json", content);
-            response.EnsureSuccessStatusCode();
-        }
-
-        public async Task<Notification?> GetNotificationAsync(string patientId)
+        public async Task<string> AddNotificationAsync(Notification notification)
         {
             try
             {
-                var response = await _httpClient.GetAsync($"/{PatientsNode}/{patientId}/notification.json");
+                var notificationData = new
+                {
+                    notification.PatientId,
+                    notification.Message,
+                    notification.Timestamp,
+                    notification.IsRead,
+                    notification.PatientFamilyDeviceToken
+                };
+
+                var response = await _httpClient.PostAsJsonAsync(
+                    $"/{PatientsNode}/{notification.PatientId}/notifications.json",
+                    notificationData
+                );
                 response.EnsureSuccessStatusCode();
 
-                var json = await response.Content.ReadAsStringAsync();
-
-                if (string.IsNullOrWhiteSpace(json) || json == "null")
-                    return null;
-
-                var notification = JsonSerializer.Deserialize<Notification>(json,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return notification;
+                var content = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<FirebasePostResponse>(content);
+                return result?.Name ?? string.Empty;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Firebase GetNotification Error: {ex.Message}");
-                return null;
-            }
-        }
-
-        public async Task MarkNotificationAsReadAsync(string patientId)
-        {
-            try
-            {
-                var notification = await GetNotificationAsync(patientId);
-                if (notification != null)
-                {
-                    notification.IsRead = true;
-                    await AddOrReplaceNotificationAsync(notification);
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Firebase MarkNotificationAsRead Error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Firebase AddNotification Error: {ex.Message}");
                 throw;
             }
         }
 
-        public async Task DeleteNotificationAsync(string patientId)
+        public async Task<List<Notification>> GetNotificationsAsync(string patientId)
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"/{PatientsNode}/{patientId}/notification.json");
+                var response = await _httpClient.GetAsync($"/{PatientsNode}/{patientId}/notifications.json");
+                if (!response.IsSuccessStatusCode)
+                    return new List<Notification>();
+
+                var content = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrWhiteSpace(content) || content == "null")
+                    return new List<Notification>();
+
+                var notifications = JsonSerializer.Deserialize<Dictionary<string, Notification>>(
+                    content,
+                    _jsonOptions
+                );
+                if (notifications == null)
+                    return new List<Notification>();
+
+                var result = new List<Notification>();
+                foreach (var kvp in notifications)
+                {
+                    var notification = kvp.Value;
+                    notification.Id = kvp.Key;
+                    result.Add(notification);
+                }
+
+                // Sorteer op timestamp (nieuwste eerst)
+                return result.OrderByDescending(n => n.Timestamp).ToList();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase GetNotifications Error: {ex.Message}");
+                return new List<Notification>();
+            }
+        }
+
+        public async Task MarkNotificationAsReadAsync(string patientId, string notificationId)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"MarkNotificationAsReadAsync called - PatientId: {patientId}, NotificationId: {notificationId}");
+                
+                // Eerst de notificatie ophalen
+                var getResponse = await _httpClient.GetAsync($"/{PatientsNode}/{patientId}/notifications/{notificationId}.json");
+                
+                if (!getResponse.IsSuccessStatusCode)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Failed to get notification: {getResponse.StatusCode}");
+                    return;
+                }
+
+                var content = await getResponse.Content.ReadAsStringAsync();
+                System.Diagnostics.Debug.WriteLine($"Current notification data: {content}");
+                
+                var notification = JsonSerializer.Deserialize<Notification>(content, _jsonOptions);
+                
+                if (notification == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("Notification is null after deserialization");
+                    return;
+                }
+
+                // Update IsRead naar true
+                notification.IsRead = true;
+                notification.Id = notificationId; // Zorg dat ID behouden blijft
+                
+                // Hele notificatie terugschrijven met PUT
+                var updatedNotificationData = new
+                {
+                    notification.PatientId,
+                    notification.Message,
+                    notification.Timestamp,
+                    IsRead = true, // Expliciet true
+                    notification.PatientFamilyDeviceToken
+                };
+
+                var json = JsonSerializer.Serialize(updatedNotificationData);
+                System.Diagnostics.Debug.WriteLine($"Updated notification JSON: {json}");
+                
+                var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+                
+                var putResponse = await _httpClient.PutAsync(
+                    $"/{PatientsNode}/{patientId}/notifications/{notificationId}.json",
+                    stringContent
+                );
+                
+                System.Diagnostics.Debug.WriteLine($"PUT response status: {putResponse.StatusCode}");
+                
+                if (!putResponse.IsSuccessStatusCode)
+                {
+                    var errorContent = await putResponse.Content.ReadAsStringAsync();
+                    System.Diagnostics.Debug.WriteLine($"PUT error response: {errorContent}");
+                }
+                
+                putResponse.EnsureSuccessStatusCode();
+                
+                System.Diagnostics.Debug.WriteLine("✅ Notification marked as read successfully!");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase MarkNotificationAsRead Error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                throw;
+            }
+        }
+
+        public async Task DeleteNotificationAsync(string patientId, string notificationId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync(
+                    $"/{PatientsNode}/{patientId}/notifications/{notificationId}.json"
+                );
                 response.EnsureSuccessStatusCode();
             }
             catch (Exception ex)

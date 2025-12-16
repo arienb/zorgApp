@@ -23,377 +23,391 @@
             CommandParameter="{Binding SelectedItem}"/>
     </ContentPage.ToolbarItems>
 
-    <Grid RowDefinitions="*,Auto">
-        <!-- Diary Items List -->
-        <RefreshView Grid.Row="0"
-                     IsRefreshing="{Binding IsRefreshing}"
+    <Grid>
+        <!-- Main Content Area -->
+        <RefreshView IsRefreshing="{Binding IsRefreshing}"
                      Command="{Binding LoadDiaryItemsCommand}"
                      RefreshColor="#6366F1">
+            
+            <ScrollView>
+                <VerticalStackLayout Spacing="12" Padding="16,10,16,100">
+                    
+                    <!-- Button voor verpleging om notificatie toe te voegen -->
+                    <Button Text="+ Notificatie toevoegen"
+                            Command="{Binding AddNotificationCommand}"
+                            IsVisible="{Binding IsNurseMode}"
+                            BackgroundColor="#2563EB"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            CornerRadius="8"
+                            HeightRequest="44"
+                            Margin="0,0,0,10"/>
 
-            <VerticalStackLayout Spacing="12" Padding="16,10">
-                <!-- Button voor verpleging om notificatie toe te voegen -->
-                <Button Text="+ Notificatie toevoegen"
-                    Command="{Binding AddOrReplaceNotificationCommand}"
-                    IsVisible="{Binding IsNurseMode}"
-                    BackgroundColor="#2563EB"
-                    TextColor="White"
-                    FontAttributes="Bold"
-                    CornerRadius="8"
-                    HeightRequest="44"
-                    Margin="0,0,0,10"/>
+                    <!-- Notificaties Sectie (alleen zichtbaar als er notificaties zijn) -->
+                    <VerticalStackLayout Spacing="12" 
+                                       IsVisible="{Binding HasNotifications}">
+                        
+                        <!-- Header voor notificaties sectie -->
+                        <Label Text="📬 Notificaties"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="#1F2937"
+                               Margin="4,0,0,4"/>
 
-                <!-- Notificatie Kaart (alleen zichtbaar voor patiënt/familie als er een notificatie is) -->
-                <Border BackgroundColor="White"
-                        StrokeThickness="0"
-                        Padding="0"
-                        IsVisible="{Binding Notification, Converter={StaticResource NullToBoolConverter}}">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="16"/>
-                    </Border.StrokeShape>
-                    <Border.Shadow>
-                        <Shadow Offset="0,4"
-                                Radius="12"
-                                Opacity="0.2"
-                                Brush="{Binding Notification.IsRead, Converter={StaticResource NotificationShadowColorConverter}}" />
-                    </Border.Shadow>
+                        <!-- Notificaties BindableLayout (werkt beter binnen ScrollView) -->
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Notifications}"
+                                           Spacing="12">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:Notification">
+                                    <Border BackgroundColor="White"
+                                            StrokeThickness="0"
+                                            Padding="0"
+                                            Margin="0,0,0,0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="16"/>
+                                        </Border.StrokeShape>
+                                        <Border.Shadow>
+                                            <Shadow Offset="0,4"
+                                                    Radius="12"
+                                                    Opacity="0.2"
+                                                    Brush="#F59E0B" />
+                                        </Border.Shadow>
 
-                    <Grid RowDefinitions="Auto,*,Auto" Padding="0">
-                        <!-- Gekleurde header bar - verandert van oranje naar groen als gelezen -->
-                        <Border Grid.Row="0"
-                                StrokeThickness="0"
-                                HeightRequest="6">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="16,16,0,0"/>
-                            </Border.StrokeShape>
-                            <Border.Triggers>
-                                <DataTrigger TargetType="Border"
-                                             Binding="{Binding Notification.IsRead}"
-                                             Value="False">
-                                    <Setter Property="Background">
-                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                            <GradientStop Color="#F59E0B" Offset="0.0"/>
-                                            <GradientStop Color="#EF4444" Offset="1.0"/>
-                                        </LinearGradientBrush>
-                                    </Setter>
-                                </DataTrigger>
-                                <DataTrigger TargetType="Border"
-                                             Binding="{Binding Notification.IsRead}"
-                                             Value="True">
-                                    <Setter Property="Background">
-                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                            <GradientStop Color="#10B981" Offset="0.0"/>
-                                            <GradientStop Color="#059669" Offset="1.0"/>
-                                        </LinearGradientBrush>
-                                    </Setter>
-                                </DataTrigger>
-                            </Border.Triggers>
-                        </Border>
+                                        <Grid RowDefinitions="Auto,*,Auto" Padding="0">
+                                            <!-- Gekleurde header bar -->
+                                            <Border Grid.Row="0"
+                                                    StrokeThickness="0"
+                                                    HeightRequest="6">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="16,16,0,0"/>
+                                                </Border.StrokeShape>
+                                                <Border.Triggers>
+                                                    <DataTrigger TargetType="Border"
+                                                               Binding="{Binding IsRead}"
+                                                               Value="False">
+                                                        <Setter Property="Background">
+                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                <GradientStop Color="#F59E0B" Offset="0.0"/>
+                                                                <GradientStop Color="#EF4444" Offset="1.0"/>
+                                                            </LinearGradientBrush>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                    <DataTrigger TargetType="Border"
+                                                               Binding="{Binding IsRead}"
+                                                               Value="True">
+                                                        <Setter Property="Background">
+                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                <GradientStop Color="#10B981" Offset="0.0"/>
+                                                                <GradientStop Color="#059669" Offset="1.0"/>
+                                                            </LinearGradientBrush>
+                                                        </Setter>
+                                                    </DataTrigger>
+                                                </Border.Triggers>
+                                            </Border>
 
-                        <!-- Notificatie inhoud -->
-                        <VerticalStackLayout Grid.Row="1" Spacing="10" Padding="16">
-                            <HorizontalStackLayout Spacing="10">
-                                <Label FontSize="24"
-                                       VerticalOptions="Start">
-                                    <Label.Triggers>
-                                        <DataTrigger TargetType="Label"
-                                                     Binding="{Binding Notification.IsRead}"
-                                                     Value="False">
-                                            <Setter Property="Text" Value="⚠️"/>
-                                        </DataTrigger>
-                                        <DataTrigger TargetType="Label"
-                                                     Binding="{Binding Notification.IsRead}"
-                                                     Value="True">
-                                            <Setter Property="Text" Value="✅"/>
-                                        </DataTrigger>
-                                    </Label.Triggers>
-                                </Label>
-                                <VerticalStackLayout Spacing="4" HorizontalOptions="FillAndExpand">
-                                    <Label Text="Notificatie"
-                                           FontSize="16"
-                                           FontAttributes="Bold"
-                                           TextColor="#92400E"/>
-                                    <Label Text="{Binding Notification.Message}"
-                                           FontSize="15"
-                                           TextColor="#1F2937"
-                                           LineBreakMode="WordWrap"/>
-                                    <Label Text="{Binding Notification.Timestamp, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
-                                           FontSize="12"
-                                           TextColor="#6B7280"
-                                           Margin="0,4,0,0"/>
-                                </VerticalStackLayout>
-                            </HorizontalStackLayout>
+                                            <!-- Notificatie inhoud -->
+                                            <VerticalStackLayout Grid.Row="1" Spacing="10" Padding="16">
+                                                <HorizontalStackLayout Spacing="10">
+                                                    <Label FontSize="24"
+                                                           VerticalOptions="Start">
+                                                        <Label.Triggers>
+                                                            <DataTrigger TargetType="Label"
+                                                                       Binding="{Binding IsRead}"
+                                                                       Value="False">
+                                                                <Setter Property="Text" Value="⚠️"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger TargetType="Label"
+                                                                       Binding="{Binding IsRead}"
+                                                                       Value="True">
+                                                                <Setter Property="Text" Value="✅"/>
+                                                            </DataTrigger>
+                                                        </Label.Triggers>
+                                                    </Label>
+                                                    <VerticalStackLayout Spacing="4" HorizontalOptions="FillAndExpand">
+                                                        <Label Text="{Binding Message}"
+                                                               FontSize="15"
+                                                               TextColor="#1F2937"
+                                                               LineBreakMode="WordWrap"/>
+                                                        <Label Text="{Binding Timestamp, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
+                                                               FontSize="12"
+                                                               TextColor="#6B7280"
+                                                               Margin="0,4,0,0"/>
+                                                    </VerticalStackLayout>
+                                                </HorizontalStackLayout>
 
-                            <!-- Gelezen indicator (alleen voor verpleging) -->
-                            <Border Padding="8,4"
-                                    StrokeThickness="0"
-                                    IsVisible="{Binding IsNurseMode}"
-                                    HorizontalOptions="Start">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Border.Triggers>
-                                    <DataTrigger TargetType="Border"
-                                                 Binding="{Binding Notification.IsRead}"
-                                                 Value="True">
-                                        <Setter Property="BackgroundColor" Value="#D1FAE5"/>
-                                    </DataTrigger>
-                                    <DataTrigger TargetType="Border"
-                                                 Binding="{Binding Notification.IsRead}"
-                                                 Value="False">
-                                        <Setter Property="BackgroundColor" Value="#FEE2E2"/>
-                                    </DataTrigger>
-                                </Border.Triggers>
-                                <Label FontSize="12" FontAttributes="Bold">
-                                    <Label.Triggers>
-                                        <DataTrigger TargetType="Label"
-                                                     Binding="{Binding Notification.IsRead}"
-                                                     Value="True">
-                                            <Setter Property="Text" Value="✓ Gelezen"/>
-                                            <Setter Property="TextColor" Value="#065F46"/>
-                                        </DataTrigger>
-                                        <DataTrigger TargetType="Label"
-                                                     Binding="{Binding Notification.IsRead}"
-                                                     Value="False">
-                                            <Setter Property="Text" Value="● Ongelezen"/>
-                                            <Setter Property="TextColor" Value="#991B1B"/>
-                                        </DataTrigger>
-                                    </Label.Triggers>
-                                </Label>
-                            </Border>
+                                                <!-- Gelezen indicator (alleen voor verpleging) -->
+                                                <Border Padding="8,4"
+                                                        StrokeThickness="0"
+                                                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiaryPageViewModel}}, Path=IsNurseMode}"
+                                                        HorizontalOptions="Start">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="8"/>
+                                                    </Border.StrokeShape>
+                                                    <Border.Triggers>
+                                                        <DataTrigger TargetType="Border"
+                                                                   Binding="{Binding IsRead}"
+                                                                   Value="True">
+                                                            <Setter Property="BackgroundColor" Value="#D1FAE5"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger TargetType="Border"
+                                                                   Binding="{Binding IsRead}"
+                                                                   Value="False">
+                                                            <Setter Property="BackgroundColor" Value="#FEE2E2"/>
+                                                        </DataTrigger>
+                                                    </Border.Triggers>
+                                                    <Label FontSize="12" FontAttributes="Bold">
+                                                        <Label.Triggers>
+                                                            <DataTrigger TargetType="Label"
+                                                                       Binding="{Binding IsRead}"
+                                                                       Value="True">
+                                                                <Setter Property="Text" Value="✓ Gelezen"/>
+                                                                <Setter Property="TextColor" Value="#065F46"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger TargetType="Label"
+                                                                       Binding="{Binding IsRead}"
+                                                                       Value="False">
+                                                                <Setter Property="Text" Value="● Ongelezen"/>
+                                                                <Setter Property="TextColor" Value="#991B1B"/>
+                                                            </DataTrigger>
+                                                        </Label.Triggers>
+                                                    </Label>
+                                                </Border>
+                                            </VerticalStackLayout>
+
+                                            <!-- Actie knoppen (alleen voor patiënt/familie) -->
+                                            <Grid Grid.Row="2" 
+                                                  ColumnDefinitions="*,*" 
+                                                  ColumnSpacing="0"
+                                                  IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiaryPageViewModel}}, Path=IsNurseMode, Converter={StaticResource InvertedBoolConverter}}">
+                                                
+                                                <!-- Markeer als gelezen knop - MET BUTTON VOOR BETROUWBAARHEID -->
+                                                <Button Grid.Column="0"
+                                                        Text="✓ Gelezen"
+                                                        FontSize="12"
+                                                        FontAttributes="Bold"
+                                                        CornerRadius="0"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiaryPageViewModel}}, Path=MarkNotificationAsReadCommand}"
+                                                        CommandParameter="{Binding .}">
+                                                    <Button.Triggers>
+                                                        <DataTrigger TargetType="Button"
+                                                                   Binding="{Binding IsRead}"
+                                                                   Value="False">
+                                                            <Setter Property="BackgroundColor" Value="#DBEAFE"/>
+                                                            <Setter Property="TextColor" Value="#1E40AF"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger TargetType="Button"
+                                                                   Binding="{Binding IsRead}"
+                                                                   Value="True">
+                                                            <Setter Property="BackgroundColor" Value="#E5E7EB"/>
+                                                            <Setter Property="TextColor" Value="#6B7280"/>
+                                                        </DataTrigger>
+                                                    </Button.Triggers>
+                                                </Button>
+
+                                                <!-- Verwijder knop - MET BUTTON VOOR BETROUWBAARHEID -->
+                                                <Button Grid.Column="1"
+                                                        Text="🗑️ Verwijderen"
+                                                        FontSize="12"
+                                                        FontAttributes="Bold"
+                                                        BackgroundColor="#FEE2E2"
+                                                        TextColor="#991B1B"
+                                                        CornerRadius="0"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiaryPageViewModel}}, Path=DeleteNotificationCommand}"
+                                                        CommandParameter="{Binding .}"/>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
                         </VerticalStackLayout>
 
-                        <!-- Actie knoppen (alleen voor patiënt/familie) - kleiner gemaakt -->
-                        <Grid Grid.Row="2" 
-                              ColumnDefinitions="*,*" 
-                              ColumnSpacing="0"
-                              IsVisible="{Binding IsNurseMode, Converter={StaticResource InvertedBoolConverter}}">
-                            <!-- Markeer als gelezen knop -->
-                            <Border Grid.Column="0"
-                                    StrokeThickness="0"
-                                    BackgroundColor="#DBEAFE"
-                                    Padding="12,10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="0,0,0,0"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding MarkNotificationAsReadCommand}"/>
-                                </Border.GestureRecognizers>
-                                <HorizontalStackLayout Spacing="4" HorizontalOptions="Center">
-                                    <Label Text="✓"
-                                           FontSize="14"
-                                           FontAttributes="Bold"
-                                           TextColor="#1E40AF"
-                                           VerticalOptions="Center"/>
-                                    <Label Text="Gelezen"
-                                           FontSize="12"
-                                           FontAttributes="Bold"
-                                           TextColor="#1E40AF"
-                                           VerticalOptions="Center"/>
-                                </HorizontalStackLayout>
-                            </Border>
+                        <!-- Divider tussen notificaties en dagboek items -->
+                        <BoxView HeightRequest="1"
+                                 BackgroundColor="#E5E7EB"
+                                 Margin="0,8"/>
+                    </VerticalStackLayout>
 
-                            <!-- Verwijder knop -->
-                            <Border Grid.Column="1"
-                                    StrokeThickness="0"
-                                    BackgroundColor="#FEE2E2"
-                                    Padding="12,10">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="0,0,0,0"/>
-                                </Border.StrokeShape>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding DeleteNotificationCommand}"/>
-                                </Border.GestureRecognizers>
-                                <HorizontalStackLayout Spacing="4" HorizontalOptions="Center">
-                                    <Label Text="🗑️"
-                                           FontSize="14"
-                                           VerticalOptions="Center"/>
-                                    <Label Text="Verwijderen"
-                                           FontSize="12"
-                                           FontAttributes="Bold"
-                                           TextColor="#991B1B"
-                                           VerticalOptions="Center"/>
-                                </HorizontalStackLayout>
-                            </Border>
-                        </Grid>
-                    </Grid>
-                </Border>
+                    <!-- Dagboek items header -->
+                    <Label Text="📔 Dagboek"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="#1F2937"
+                           Margin="4,8,0,4"/>
 
-                <!-- Dagboek items CollectionView -->
-                <CollectionView ItemsSource="{Binding DiaryItems}"
-                            SelectionMode="None"
-                            Margin="0,10,0,0">
-                    <CollectionView.EmptyView>
-                        <StackLayout Padding="40"
-                                 VerticalOptions="Center"
-                                 HorizontalOptions="Center">
+                    <!-- Dagboek items BindableLayout -->
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding DiaryItems}"
+                                       Spacing="8">
+                        <BindableLayout.EmptyView>
                             <Border BackgroundColor="White"
-                                StrokeThickness="0"
-                                Padding="40,50">
+                                    StrokeThickness="0"
+                                    Padding="40,50"
+                                    Margin="0,20">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="20" />
                                 </Border.StrokeShape>
                                 <Border.Shadow>
                                     <Shadow Brush="Black"
-                                        Offset="0,4"
-                                        Radius="12"
-                                        Opacity="0.1" />
+                                            Offset="0,4"
+                                            Radius="12"
+                                            Opacity="0.1" />
                                 </Border.Shadow>
                                 <VerticalStackLayout Spacing="15">
                                     <Label Text="📝"
-                                       FontSize="80"
-                                       HorizontalTextAlignment="Center"
-                                       Margin="0,0,0,10" />
+                                           FontSize="80"
+                                           HorizontalTextAlignment="Center"
+                                           Margin="0,0,0,10" />
                                     <Label Text="Nog geen dagboek items"
-                                       FontSize="20"
-                                       FontAttributes="Bold"
-                                       TextColor="#1F2937"
-                                       HorizontalTextAlignment="Center" />
-                                    <Label Text="Druk op de + knop om een item toe te voegen"
-                                       FontSize="15"
-                                       TextColor="#6B7280"
-                                       HorizontalTextAlignment="Center"
-                                       Margin="0,5,0,0" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </StackLayout>
-                    </CollectionView.EmptyView>
-
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:DiaryItem">
-                            <Border Margin="0,8"
-                                Padding="0"
-                                StrokeThickness="0"
-                                BackgroundColor="White">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="20" />
-                                </Border.StrokeShape>
-                                <Border.Shadow>
-                                    <Shadow Brush="#6366F1"
-                                        Offset="0,4"
-                                        Radius="12"
-                                        Opacity="0.15" />
-                                </Border.Shadow>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer 
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiaryPageViewModel}}, Path=ItemTappedCommand}"
-                                    CommandParameter="{Binding .}" />
-                                </Border.GestureRecognizers>
-
-                                <Grid RowDefinitions="Auto,*" Padding="0">
-                                    <!-- Colored Header Bar -->
-                                    <Border Grid.Row="0"
-                                        StrokeThickness="0"
-                                        HeightRequest="6">
-                                        <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="20,20,0,0" />
-                                        </Border.StrokeShape>
-                                        <Border.Background>
-                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                                <GradientStop Color="#6366F1" Offset="0.0" />
-                                                <GradientStop Color="#8B5CF6" Offset="0.5" />
-                                                <GradientStop Color="#EC4899" Offset="1.0" />
-                                            </LinearGradientBrush>
-                                        </Border.Background>
-                                    </Border>
-
-                                    <!-- Content -->
-                                    <VerticalStackLayout Grid.Row="1" 
-                                                     Spacing="12" 
-                                                     Padding="20,16,20,20">
-
-                                        <!-- TITEL -->
-                                        <Label Text="{Binding Title}"
-                                           FontSize="22"
+                                           FontSize="20"
                                            FontAttributes="Bold"
                                            TextColor="#1F2937"
-                                           LineBreakMode="WordWrap"
-                                           VerticalOptions="Center"
-                                           HorizontalOptions="Fill" />
-
-                                        <!-- Info Section -->
-                                        <Grid ColumnDefinitions="*,*" 
-                                          RowDefinitions="Auto,Auto"
-                                          RowSpacing="10"
-                                          ColumnSpacing="10"
-                                          Margin="0,4,0,0">
-
-                                            <!-- DATUM -->
-                                            <Border Grid.Row="0" Grid.Column="0"
-                                                Padding="12,8"
-                                                StrokeThickness="0"
-                                                BackgroundColor="#FEF3C7">
-                                                <Border.StrokeShape>
-                                                    <RoundRectangle CornerRadius="10" />
-                                                </Border.StrokeShape>
-                                                <HorizontalStackLayout Spacing="6">
-                                                    <Label Text="📅"
-                                                       FontSize="16"
-                                                       VerticalOptions="Center" />
-                                                    <Label Text="{Binding Timestamp, StringFormat='{0:dd/MM/yyyy}'}"
-                                                       FontSize="13"
-                                                       FontAttributes="Bold"
-                                                       TextColor="#92400E"
-                                                       VerticalOptions="Center" />
-                                                </HorizontalStackLayout>
-                                            </Border>
-
-                                            <!-- TIJD -->
-                                            <Border Grid.Row="0" Grid.Column="1"
-                                                Padding="12,8"
-                                                StrokeThickness="0"
-                                                BackgroundColor="#DBEAFE">
-                                                <Border.StrokeShape>
-                                                    <RoundRectangle CornerRadius="10" />
-                                                </Border.StrokeShape>
-                                                <HorizontalStackLayout Spacing="6">
-                                                    <Label Text="🕐"
-                                                       FontSize="16"
-                                                       VerticalOptions="Center" />
-                                                    <Label Text="{Binding Timestamp, StringFormat='{0:HH:mm}'}"
-                                                       FontSize="13"
-                                                       FontAttributes="Bold"
-                                                       TextColor="#1E40AF"
-                                                       VerticalOptions="Center" />
-                                                </HorizontalStackLayout>
-                                            </Border>
-
-                                            <!-- MAKER -->
-                                            <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                                                Padding="12,8"
-                                                StrokeThickness="0"
-                                                BackgroundColor="#E0E7FF">
-                                                <Border.StrokeShape>
-                                                    <RoundRectangle CornerRadius="10" />
-                                                </Border.StrokeShape>
-                                                <HorizontalStackLayout Spacing="6">
-                                                    <Label Text="👤"
-                                                       FontSize="16"
-                                                       VerticalOptions="Center" />
-                                                    <Label Text="{Binding CreatedBy}"
-                                                       FontSize="13"
-                                                       FontAttributes="Bold"
-                                                       TextColor="#4338CA"
-                                                       VerticalOptions="Center" />
-                                                </HorizontalStackLayout>
-                                            </Border>
-                                        </Grid>
-                                    </VerticalStackLayout>
-                                </Grid>
+                                           HorizontalTextAlignment="Center" />
+                                    <Label Text="Druk op de + knop om een item toe te voegen"
+                                           FontSize="15"
+                                           TextColor="#6B7280"
+                                           HorizontalTextAlignment="Center"
+                                           Margin="0,5,0,0" />
+                                </VerticalStackLayout>
                             </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </VerticalStackLayout>
+                        </BindableLayout.EmptyView>
+
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:DiaryItem">
+                                <Border Margin="0,8"
+                                        Padding="0"
+                                        StrokeThickness="0"
+                                        BackgroundColor="White">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="20" />
+                                    </Border.StrokeShape>
+                                    <Border.Shadow>
+                                        <Shadow Brush="#6366F1"
+                                                Offset="0,4"
+                                                Radius="12"
+                                                Opacity="0.15" />
+                                    </Border.Shadow>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiaryPageViewModel}}, Path=ItemTappedCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+
+                                    <Grid RowDefinitions="Auto,*" Padding="0">
+                                        <!-- Colored Header Bar -->
+                                        <Border Grid.Row="0"
+                                                StrokeThickness="0"
+                                                HeightRequest="6">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="20,20,0,0" />
+                                            </Border.StrokeShape>
+                                            <Border.Background>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                    <GradientStop Color="#6366F1" Offset="0.0" />
+                                                    <GradientStop Color="#8B5CF6" Offset="0.5" />
+                                                    <GradientStop Color="#EC4899" Offset="1.0" />
+                                                </LinearGradientBrush>
+                                            </Border.Background>
+                                        </Border>
+
+                                        <!-- Content -->
+                                        <VerticalStackLayout Grid.Row="1" 
+                                                             Spacing="12" 
+                                                             Padding="20,16,20,20">
+
+                                            <!-- TITEL -->
+                                            <Label Text="{Binding Title}"
+                                                   FontSize="22"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#1F2937"
+                                                   LineBreakMode="WordWrap"
+                                                   VerticalOptions="Center"
+                                                   HorizontalOptions="Fill" />
+
+                                            <!-- Info Section -->
+                                            <Grid ColumnDefinitions="*,*" 
+                                                  RowDefinitions="Auto,Auto"
+                                                  RowSpacing="10"
+                                                  ColumnSpacing="10"
+                                                  Margin="0,4,0,0">
+
+                                                <!-- DATUM -->
+                                                <Border Grid.Row="0" Grid.Column="0"
+                                                        Padding="12,8"
+                                                        StrokeThickness="0"
+                                                        BackgroundColor="#FEF3C7">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="10" />
+                                                    </Border.StrokeShape>
+                                                    <HorizontalStackLayout Spacing="6">
+                                                        <Label Text="📅"
+                                                               FontSize="16"
+                                                               VerticalOptions="Center" />
+                                                        <Label Text="{Binding Timestamp, StringFormat='{0:dd/MM/yyyy}'}"
+                                                               FontSize="13"
+                                                               FontAttributes="Bold"
+                                                               TextColor="#92400E"
+                                                               VerticalOptions="Center" />
+                                                    </HorizontalStackLayout>
+                                                </Border>
+
+                                                <!-- TIJD -->
+                                                <Border Grid.Row="0" Grid.Column="1"
+                                                        Padding="12,8"
+                                                        StrokeThickness="0"
+                                                        BackgroundColor="#DBEAFE">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="10" />
+                                                    </Border.StrokeShape>
+                                                    <HorizontalStackLayout Spacing="6">
+                                                        <Label Text="🕐"
+                                                               FontSize="16"
+                                                               VerticalOptions="Center" />
+                                                        <Label Text="{Binding Timestamp, StringFormat='{0:HH:mm}'}"
+                                                               FontSize="13"
+                                                               FontAttributes="Bold"
+                                                               TextColor="#1E40AF"
+                                                               VerticalOptions="Center" />
+                                                    </HorizontalStackLayout>
+                                                </Border>
+
+                                                <!-- MAKER -->
+                                                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                                        Padding="12,8"
+                                                        StrokeThickness="0"
+                                                        BackgroundColor="#E0E7FF">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="10" />
+                                                    </Border.StrokeShape>
+                                                    <HorizontalStackLayout Spacing="6">
+                                                        <Label Text="👤"
+                                                               FontSize="16"
+                                                               VerticalOptions="Center" />
+                                                        <Label Text="{Binding CreatedBy}"
+                                                               FontSize="13"
+                                                               FontAttributes="Bold"
+                                                               TextColor="#4338CA"
+                                                               VerticalOptions="Center" />
+                                                    </HorizontalStackLayout>
+                                                </Border>
+                                            </Grid>
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </ScrollView>
         </RefreshView>
 
-        <!-- Moderne Add Button met Gradient -->
-        <Border Grid.Row="1"
-                WidthRequest="70"
+        <!-- Zwevende Add Button (Floating Action Button) -->
+        <Border WidthRequest="70"
                 HeightRequest="70"
                 StrokeThickness="0"
                 Margin="0,0,20,20"
                 HorizontalOptions="End"
-                VerticalOptions="End">
+                VerticalOptions="End"
+                InputTransparent="False">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="35" />
             </Border.StrokeShape>
@@ -418,7 +432,8 @@
                    FontAttributes="Bold"
                    TextColor="White"
                    HorizontalOptions="Center"
-                   VerticalOptions="Center" />
+                   VerticalOptions="Center"
+                   InputTransparent="True" />
         </Border>
     </Grid>
 </ContentPage>

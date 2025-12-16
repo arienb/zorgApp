@@ -22,20 +22,28 @@ namespace zorgApp.ViewModels
         private string patientName = string.Empty;
 
         [ObservableProperty]
-        private Notification? notification;
-
-        [ObservableProperty]
         private bool isRefreshing;
 
         [ObservableProperty]
         private bool isNurseMode;
 
+        [ObservableProperty]
+        private bool hasUnreadNotifications;
+
+        [ObservableProperty]
+        private int unreadNotificationCount;
+
+        [ObservableProperty]
+        private bool hasNotifications;
+
         public ObservableCollection<DiaryItem> DiaryItems { get; set; }
+        public ObservableCollection<Notification> Notifications { get; set; }
 
         public DiaryPageViewModel(FirebaseService firebaseService)
         {
             _firebaseService = firebaseService;
             DiaryItems = new ObservableCollection<DiaryItem>();
+            Notifications = new ObservableCollection<Notification>();
             
             // Check if logged in as nurse (has CurrentDepartment preference)
             IsNurseMode = !string.IsNullOrEmpty(Preferences.Get("CurrentDepartment", string.Empty));
@@ -53,7 +61,7 @@ namespace zorgApp.ViewModels
         {
             await LoadPatientNameAsync();
             await LoadDiaryItemsAsync();
-            Notification = await _firebaseService.GetNotificationAsync(PatientId);
+            await LoadNotificationsAsync();
         }
 
         private async Task LoadPatientNameAsync()
@@ -71,6 +79,33 @@ namespace zorgApp.ViewModels
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error loading patient name: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        private async Task LoadNotificationsAsync()
+        {
+            if (string.IsNullOrEmpty(PatientId))
+                return;
+
+            try
+            {
+                var notifications = await _firebaseService.GetNotificationsAsync(PatientId);
+                
+                Notifications.Clear();
+                foreach (var notification in notifications)
+                {
+                    Notifications.Add(notification);
+                }
+
+                // Update notification properties
+                HasNotifications = Notifications.Count > 0;
+                UnreadNotificationCount = Notifications.Count(n => !n.IsRead);
+                HasUnreadNotifications = UnreadNotificationCount > 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading notifications: {ex.Message}");
             }
         }
 
@@ -158,7 +193,7 @@ namespace zorgApp.ViewModels
 
         //------- enkel voor verpleging -------//
         [RelayCommand]
-        private async Task AddOrReplaceNotificationAsync()
+        private async Task AddNotificationAsync()
         {
             if (string.IsNullOrEmpty(PatientId))
             {
@@ -166,38 +201,43 @@ namespace zorgApp.ViewModels
                 return;
             }
 
-            // Voorbeeld: vraag de gebruiker om een bericht in te geven
             string message = await Shell.Current.DisplayPromptAsync("Nieuwe notificatie", "Voer bericht in:");
 
             if (string.IsNullOrWhiteSpace(message))
                 return;
 
-            var notification = new Notification
+            try
             {
-                PatientId = PatientId,
-                Message = message,
-                Timestamp = DateTime.UtcNow,
-                IsRead = false
-            };
+                var notification = new Notification
+                {
+                    PatientId = PatientId,
+                    Message = message,
+                    Timestamp = DateTime.UtcNow,
+                    IsRead = false
+                };
 
-            await _firebaseService.AddOrReplaceNotificationAsync(notification);
-
-            Notification = await _firebaseService.GetNotificationAsync(PatientId);
-            
-            await Shell.Current.DisplayAlert("Succes", "Notificatie verzonden!", "OK");
+                await _firebaseService.AddNotificationAsync(notification);
+                await LoadNotificationsAsync();
+                
+                await Shell.Current.DisplayAlert("Succes", "Notificatie toegevoegd!", "OK");
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Fout", $"Kon notificatie niet toevoegen: {ex.Message}", "OK");
+            }
         }
 
         //------- voor patiënt/familie -------//
         [RelayCommand]
-        private async Task MarkNotificationAsReadAsync()
+        private async Task MarkNotificationAsReadAsync(Notification notification)
         {
-            if (Notification == null || string.IsNullOrEmpty(PatientId))
+            if (notification == null || string.IsNullOrEmpty(PatientId))
                 return;
 
             try
             {
-                await _firebaseService.MarkNotificationAsReadAsync(PatientId);
-                Notification = await _firebaseService.GetNotificationAsync(PatientId);
+                await _firebaseService.MarkNotificationAsReadAsync(PatientId, notification.Id);
+                await LoadNotificationsAsync();
             }
             catch (Exception ex)
             {
@@ -206,9 +246,9 @@ namespace zorgApp.ViewModels
         }
 
         [RelayCommand]
-        private async Task DeleteNotificationAsync()
+        private async Task DeleteNotificationAsync(Notification notification)
         {
-            if (Notification == null || string.IsNullOrEmpty(PatientId))
+            if (notification == null || string.IsNullOrEmpty(PatientId))
                 return;
 
             bool confirm = await Shell.Current.DisplayAlert(
@@ -223,8 +263,8 @@ namespace zorgApp.ViewModels
 
             try
             {
-                await _firebaseService.DeleteNotificationAsync(PatientId);
-                Notification = null;
+                await _firebaseService.DeleteNotificationAsync(PatientId, notification.Id);
+                await LoadNotificationsAsync();
             }
             catch (Exception ex)
             {
