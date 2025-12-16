@@ -12,6 +12,7 @@
         <ResourceDictionary>
             <converters:NullToBoolConverter x:Key="NullToBoolConverter"/>
             <converters:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+            <converters:StringNotNullOrEmptyConverter x:Key="StringNotNullOrEmptyConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -321,6 +322,21 @@
                                                    LineBreakMode="WordWrap"
                                                    VerticalOptions="Center"
                                                    HorizontalOptions="Fill" />
+
+                                            <!-- IMAGE PREVIEW -->
+                                            <Border StrokeThickness="0"
+                                                    HeightRequest="180"
+                                                    BackgroundColor="#F3F4F6"
+                                                    Margin="0,4,0,0"
+                                                    IsVisible="{Binding ImageUrl, Converter={StaticResource StringNotNullOrEmptyConverter}}">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="12"/>
+                                                </Border.StrokeShape>
+                                                <Image Source="{Binding ImageUrl}"
+                                                       Aspect="AspectFill"
+                                                       HorizontalOptions="Fill"
+                                                       VerticalOptions="Fill"/>
+                                            </Border>
 
                                             <!-- Info Section -->
                                             <Grid ColumnDefinitions="*,*" 
