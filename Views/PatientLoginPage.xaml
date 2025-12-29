@@ -6,74 +6,103 @@
     x:Class="zorgApp.Views.PatientLoginPage"
     x:DataType="viewmodels:PatientLoginViewModel"
     Title="Patiënt Login"
-    BackgroundColor="#F5F7FA">
+    BackgroundColor="#F5F7FA"
+    Shell.NavBarIsVisible="False">
 
-    <VerticalStackLayout
-        Padding="40"
-        Spacing="30"
-        VerticalOptions="Center">
+    <Grid RowDefinitions="*,Auto,*" Padding="50,70,50,50">
+        
+        <!-- Logo bovenaan -->
+        <Image 
+            Grid.Row="0"
+            Source="logo_jessa.png"
+            HeightRequest="80"
+            WidthRequest="260"
+            Aspect="AspectFit"
+            VerticalOptions="End"
+            HorizontalOptions="Center"
+            Margin="0,0,0,35" />
 
+        <!-- Login Card -->
         <Border
-            Padding="40"
+            Grid.Row="1"
+            Padding="40,35"
             BackgroundColor="White"
-            StrokeThickness="0">
+            StrokeThickness="0"
+            HorizontalOptions="Center"
+            WidthRequest="350">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="20" />
             </Border.StrokeShape>
             <Border.Shadow>
-                <Shadow Brush="Black" Offset="0,4" Radius="20" Opacity="0.1" />
+                <Shadow Brush="Black" Offset="0,6" Radius="24" Opacity="0.08" />
             </Border.Shadow>
 
             <VerticalStackLayout Spacing="25">
                 <Label 
-                    Text="🏥" 
-                    FontSize="80" 
-                    HorizontalTextAlignment="Center" />
-                
-                <Label 
-                    Text="Welkom Patiënt" 
-                    FontSize="28" 
+                    Text="Patiënt Login" 
+                    FontSize="26" 
                     FontAttributes="Bold" 
                     TextColor="#1F2937" 
                     HorizontalTextAlignment="Center" />
                 
                 <Label 
-                    Text="Voer uw unieke code in om uw dagboek te bekijken" 
+                    Text="Voer uw unieke code in:" 
                     FontSize="14" 
                     TextColor="#6B7280" 
-                    HorizontalTextAlignment="Center" />
-
-                <Entry 
-                    Text="{Binding UniqueCode}"
-                    Placeholder="..."
-                    FontSize="18"
                     HorizontalTextAlignment="Center"
-                    MaxLength="6"
-                    Keyboard="Default"
-                    Margin="0,10,0,0" />
+                    Margin="0,0,0,5" />
+
+                <Border
+                    StrokeThickness="2"
+                    Stroke="#9ED5CB"
+                    BackgroundColor="White"
+                    Padding="0"
+                    Margin="0,10,0,0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    
+                    <Entry 
+                        Text="{Binding UniqueCode}"
+                        FontSize="24"
+                        FontAttributes="Bold"
+                        TextColor="#1F2937"
+                        HorizontalTextAlignment="Center"
+                        MaxLength="6"
+                        Keyboard="Text"
+                        Margin="15,12"
+                        BackgroundColor="Transparent" />
+                </Border>
 
                 <Button 
                     Text="Inloggen"
                     Command="{Binding LoginCommand}"
                     HeightRequest="55"
-                    FontSize="16"
+                    FontSize="17"
                     FontAttributes="Bold"
-                    CornerRadius="16"
-                    Margin="0,10,0,0">
-                    <Button.Background>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#6366F1" Offset="0.0" />
-                            <GradientStop Color="#8B5CF6" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </Button.Background>
-                </Button>
+                    BackgroundColor="#9ED5CB"
+                    TextColor="White"
+                    CornerRadius="12"
+                    Margin="0,15,0,0" />
 
                 <ActivityIndicator 
                     IsRunning="{Binding IsLoading}"
                     IsVisible="{Binding IsLoading}"
-                    Color="#6366F1"
-                    Margin="0,10,0,0" />
+                    Color="#9ED5CB"
+                    Margin="0,5,0,0" />
             </VerticalStackLayout>
         </Border>
-    </VerticalStackLayout>
+
+        <!-- Back button onderaan -->
+        <Button 
+            Grid.Row="2"
+            Text="Terug"
+            Command="{Binding BackCommand}"
+            BackgroundColor="Transparent"
+            TextColor="#6B7280"
+            FontSize="15"
+            VerticalOptions="Start"
+            HorizontalOptions="Center"
+            Margin="0,30,0,0" />
+    </Grid>
 </ContentPage>

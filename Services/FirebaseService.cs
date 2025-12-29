@@ -290,6 +290,8 @@ namespace zorgApp.Services
                     patient.ProfileImageUrl = imageUrl;
                 }
 
+                // ⚠️ KRITIEKE FIX: Gebruik PATCH in plaats van PUT om alleen specifieke velden te updaten
+                // PUT vervangt het hele object en verwijdert nested data zoals diaryItems!
                 var toUpdate = new
                 {
                     patient.Name,
@@ -310,9 +312,11 @@ namespace zorgApp.Services
                 var json = JsonSerializer.Serialize(toUpdate);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                // ⚠️ BELANGRIJKE WIJZIGING: Gebruik PUT in plaats van PATCH
-                var response = await _httpClient.PutAsync($"/{PatientsNode}/{id}.json", content);
+                // ✅ GEBRUIK PATCH IN PLAATS VAN PUT
+                var response = await _httpClient.PatchAsync($"/{PatientsNode}/{id}.json", content);
                 response.EnsureSuccessStatusCode();
+                
+                System.Diagnostics.Debug.WriteLine("✅ Patient profile updated successfully with PATCH!");
             }
             catch (Exception ex)
             {

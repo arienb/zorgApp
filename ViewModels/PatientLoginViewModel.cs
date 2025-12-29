@@ -42,6 +42,9 @@ public partial class PatientLoginViewModel : ObservableObject
 
             if (patient != null)
             {
+                // ✅ BELANGRIJKE FIX: Verwijder nurse session bij patient login
+                Preferences.Remove("CurrentDepartment");
+                
                 // Navigate to diary page with patient ID
                 await Shell.Current.GoToAsync($"DiaryItemsPage?PatientId={patient.FirebaseId}");
             }
@@ -58,5 +61,11 @@ public partial class PatientLoginViewModel : ObservableObject
         {
             IsLoading = false;
         }
+    }
+
+    [RelayCommand]
+    private async Task Back()
+    {
+        await Shell.Current.GoToAsync("..");
     }
 }

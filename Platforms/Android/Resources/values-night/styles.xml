@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark theme that inherits from Material Components -->
+    <style name="MainTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Dark theme colors -->
+        <item name="colorPrimary">#AC99EA</item>
+        <item name="colorPrimaryVariant">#7D5DC8</item>
+        <item name="colorOnPrimary">#000000</item>
+        <item name="colorSecondary">#DFD8F7</item>
+        <item name="colorSecondaryVariant">#C4B5F0</item>
+        <item name="colorOnSecondary">#000000</item>
+        
+        <!-- Bottom Navigation View specific attributes -->
+        <item name="bottomNavigationStyle">@style/Widget.MaterialComponents.BottomNavigationView</item>
+    </style>
+</resources>

@@ -11,109 +11,241 @@
         <VerticalStackLayout Spacing="16" Padding="16">
 
             <!-- Patient Form Card -->
-            <Border StrokeThickness="0" Padding="20" BackgroundColor="White">
+            <Border StrokeThickness="0" 
+                    Padding="0" 
+                    BackgroundColor="White"
+                    Margin="0,8">
                 <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="16"/>
+                    <RoundRectangle CornerRadius="20"/>
                 </Border.StrokeShape>
                 <Border.Shadow>
-                    <Shadow Brush="Black" Offset="0,2" Radius="8" Opacity="0.08"/>
+                    <Shadow Brush="#9ED5CB" Offset="0,4" Radius="12" Opacity="0.15"/>
                 </Border.Shadow>
 
-                <VerticalStackLayout Spacing="16">
+                <Grid RowDefinitions="Auto,*" Padding="0">
+                    <!-- Colored Header Bar - Jessa Groen -->
+                    <Border Grid.Row="0"
+                            BackgroundColor="#9ED5CB"
+                            StrokeThickness="0"
+                            HeightRequest="6">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="20,20,0,0" />
+                        </Border.StrokeShape>
+                    </Border>
 
-                    <!-- Naam -->
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="Naam*" 
-                               FontSize="13" 
-                               TextColor="#6B7280"
-                               FontAttributes="Bold"/>
-                        <Entry Text="{Binding Name}"
-                               Placeholder="Voer naam in"
-                               BackgroundColor="#F9FAFB"
-                               TextColor="#1F2937"
-                               PlaceholderColor="#9CA3AF"
-                               IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
+                    <!-- Content -->
+                    <VerticalStackLayout Grid.Row="1" 
+                                         Spacing="16" 
+                                         Padding="20,20,20,24">
+
+                        <!-- Header met emoji -->
+                        <HorizontalStackLayout Spacing="12" Margin="0,0,0,8">
+                            <Border WidthRequest="50"
+                                    HeightRequest="50"
+                                    StrokeThickness="0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12" />
+                                </Border.StrokeShape>
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#E0F2EF" Offset="0.0" />
+                                        <GradientStop Color="#D1FAE5" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Label Text="👤"
+                                       FontSize="28"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center" />
+                            </Border>
+                            <Label Text="Patiënt Informatie"
+                                   FontSize="22"
+                                   FontAttributes="Bold"
+                                   TextColor="#1F2937"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <!-- Divider -->
+                        <BoxView HeightRequest="2"
+                                 CornerRadius="1"
+                                 Margin="0,0,0,8">
+                            <BoxView.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="Transparent" Offset="0.0" />
+                                    <GradientStop Color="#E5E7EB" Offset="0.5" />
+                                    <GradientStop Color="Transparent" Offset="1.0" />
+                                </LinearGradientBrush>
+                            </BoxView.Background>
+                        </BoxView>
+
+                        <!-- Naam -->
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Naam *" 
+                                   FontSize="13" 
+                                   TextColor="#6B7280"
+                                   FontAttributes="Bold"/>
+                            <Border Padding="14,12"
+                                    StrokeThickness="0"
+                                    BackgroundColor="#F9FAFB">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10"/>
+                                </Border.StrokeShape>
+                                <Entry Text="{Binding Name}"
+                                       Placeholder="Voer naam in"
+                                       BackgroundColor="Transparent"
+                                       TextColor="#1F2937"
+                                       PlaceholderColor="#9CA3AF"
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <!-- Email -->
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Email *" 
+                                   FontSize="13" 
+                                   TextColor="#6B7280"
+                                   FontAttributes="Bold"/>
+                            <Border Padding="14,12"
+                                    StrokeThickness="0"
+                                    BackgroundColor="#F9FAFB">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10"/>
+                                </Border.StrokeShape>
+                                <Entry Text="{Binding Email}"
+                                       Placeholder="Voer email in"
+                                       Keyboard="Email"
+                                       BackgroundColor="Transparent"
+                                       TextColor="#1F2937"
+                                       PlaceholderColor="#9CA3AF"
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <!-- Leeftijd -->
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Leeftijd *" 
+                                   FontSize="13" 
+                                   TextColor="#6B7280"
+                                   FontAttributes="Bold"/>
+                            <Border Padding="14,12"
+                                    StrokeThickness="0"
+                                    BackgroundColor="#F9FAFB">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10"/>
+                                </Border.StrokeShape>
+                                <Entry Text="{Binding AgeText}"
+                                       Placeholder="Voer leeftijd in"
+                                       Keyboard="Numeric"
+                                       BackgroundColor="Transparent"
+                                       TextColor="#1F2937"
+                                       PlaceholderColor="#9CA3AF"
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <!-- Kamernummer -->
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Kamernummer *" 
+                                   FontSize="13" 
+                                   TextColor="#6B7280"
+                                   FontAttributes="Bold"/>
+                            <Border Padding="14,12"
+                                    StrokeThickness="0"
+                                    BackgroundColor="#F9FAFB">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10"/>
+                                </Border.StrokeShape>
+                                <Entry Text="{Binding RoomNumber}"
+                                       Placeholder="Voer kamernummer in"
+                                       BackgroundColor="Transparent"
+                                       TextColor="#1F2937"
+                                       PlaceholderColor="#9CA3AF"
+                                       IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <!-- Info -->
+                        <Border Padding="12,8"
+                                StrokeThickness="0"
+                                BackgroundColor="#E0F2EF"
+                                Margin="0,8,0,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <Label Text="Alle velden zijn verplicht"
+                                   FontSize="12"
+                                   TextColor="#065F46"
+                                   FontAttributes="Bold"/>
+                        </Border>
+
+                        <!-- Loading indicator -->
+                        <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                           IsVisible="{Binding IsLoading}"
+                                           Color="#9ED5CB"
+                                           Margin="0,20,0,0"/>
+
+                        <!-- Buttons -->
+                        <Grid ColumnDefinitions="*,*" 
+                              ColumnSpacing="12"
+                              Margin="0,16,0,0">
+                            
+                            <!-- Annuleren Button -->
+                            <Border Grid.Column="0"
+                                    StrokeThickness="0"
+                                    HeightRequest="50">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12" />
+                                </Border.StrokeShape>
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#E5E7EB" Offset="0.0" />
+                                        <GradientStop Color="#D1D5DB" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding CancelCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="Annuleren"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="#4B5563"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       InputTransparent="True"/>
+                            </Border>
+
+                            <!-- Opslaan Button -->
+                            <Border Grid.Column="1"
+                                    StrokeThickness="0"
+                                    HeightRequest="50">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12" />
+                                </Border.StrokeShape>
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#9ED5CB" Offset="0.0" />
+                                        <GradientStop Color="#7AB8B3" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Border.Shadow>
+                                    <Shadow Brush="#9ED5CB"
+                                            Offset="0,4"
+                                            Radius="12"
+                                            Opacity="0.3" />
+                                </Border.Shadow>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SavePatientCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="Opslaan"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="White"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       InputTransparent="True"/>
+                            </Border>
+                        </Grid>
                     </VerticalStackLayout>
-
-                    <!-- Email -->
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="Email*" 
-                               FontSize="13" 
-                               TextColor="#6B7280"
-                               FontAttributes="Bold"/>
-                        <Entry Text="{Binding Email}"
-                               Placeholder="Voer email in"
-                               Keyboard="Email"
-                               BackgroundColor="#F9FAFB"
-                               TextColor="#1F2937"
-                               PlaceholderColor="#9CA3AF"
-                               IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
-                    </VerticalStackLayout>
-
-                    <!-- Leeftijd -->
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="Leeftijd*" 
-                               FontSize="13" 
-                               TextColor="#6B7280"
-                               FontAttributes="Bold"/>
-                        <Entry Text="{Binding AgeText}"
-                               Placeholder="Voer leeftijd in"
-                               Keyboard="Numeric"
-                               BackgroundColor="#F9FAFB"
-                               TextColor="#1F2937"
-                               PlaceholderColor="#9CA3AF"
-                               IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
-                    </VerticalStackLayout>
-
-                    <!-- Kamernummer -->
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="Kamernummer*" 
-                               FontSize="13" 
-                               TextColor="#6B7280"
-                               FontAttributes="Bold"/>
-                        <Entry Text="{Binding RoomNumber}"
-                               Placeholder="Voer kamernummer in"
-                               BackgroundColor="#F9FAFB"
-                               TextColor="#1F2937"
-                               PlaceholderColor="#9CA3AF"
-                               IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
-                    </VerticalStackLayout>
-
-                    <!-- Info -->
-                    <Label Text="* Alle velden zijn verplicht"
-                           FontSize="12"
-                           TextColor="#6B7280"
-                           Margin="0,0,0,10"/>
-
-                    <!-- Loading indicator -->
-                    <ActivityIndicator IsRunning="{Binding IsLoading}"
-                                       IsVisible="{Binding IsLoading}"
-                                       Color="{StaticResource Primary}"
-                                       Margin="0,20,0,0"/>
-
-                    <!-- Buttons -->
-                    <Button Text="Opslaan"
-                            Command="{Binding SavePatientCommand}"
-                            BackgroundColor="#2563EB"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            FontSize="16"
-                            HeightRequest="48"
-                            CornerRadius="10"
-                            Margin="0,8,0,0"
-                            IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
-
-                    <Button Text="Annuleren"
-                            Command="{Binding CancelCommand}"
-                            BackgroundColor="Gray"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            FontSize="16"
-                            HeightRequest="48"
-                            CornerRadius="10"
-                            Margin="0,8,0,0"
-                            IsEnabled="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}"/>
-                </VerticalStackLayout>
+                </Grid>
             </Border>
         </VerticalStackLayout>
     </ScrollView>

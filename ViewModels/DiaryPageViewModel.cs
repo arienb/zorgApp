@@ -53,6 +53,9 @@ namespace zorgApp.ViewModels
         {
             if (!string.IsNullOrEmpty(value))
             {
+                // ✅ BELANGRIJKE FIX: Hercheck IsNurseMode bij elke navigatie
+                IsNurseMode = !string.IsNullOrEmpty(Preferences.Get("CurrentDepartment", string.Empty));
+                
                 _ = LoadPatientAndDiaryItemsAsync();
             }
         }

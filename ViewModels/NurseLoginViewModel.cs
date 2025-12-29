@@ -194,5 +194,10 @@ namespace zorgApp.ViewModels
         {
             IsPasswordVisible = !IsPasswordVisible;
         }
+        [RelayCommand]
+        private async Task Back()
+        {
+            await Shell.Current.GoToAsync("..");
+        }
     }
 }

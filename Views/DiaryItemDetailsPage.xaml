@@ -25,31 +25,38 @@
         <ActivityIndicator Grid.Row="0"
                           IsRunning="{Binding IsLoading}"
                           IsVisible="{Binding IsLoading}"
-                          Color="#6366F1"
+                          Color="#9ED5CB"
                           VerticalOptions="Center"
                           HorizontalOptions="Center" />
 
         <!-- Content -->
         <ScrollView Grid.Row="0"
                     IsVisible="{Binding DiaryItem, Converter={StaticResource IsNotNullConverter}}">
-            <VerticalStackLayout Padding="20" Spacing="20">               
+            <VerticalStackLayout Padding="16" Spacing="16">               
 
                 <!-- Info Cards -->
-                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="15" ColumnSpacing="15">
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" RowSpacing="12" ColumnSpacing="12">
 
                     <!-- Datum Card -->
-                    <Border Grid.Row="0" Grid.Column="0" Padding="20,16" StrokeThickness="0" BackgroundColor="White">
+                    <Border Grid.Row="0" Grid.Column="0" 
+                            Padding="16,14" 
+                            StrokeThickness="0" 
+                            BackgroundColor="White">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="16" />
                         </Border.StrokeShape>
                         <Border.Shadow>
-                            <Shadow Brush="#DBEAFE" Offset="0,4" Radius="12" Opacity="0.5" />
+                            <Shadow Brush="#9ED5CB" Offset="0,4" Radius="12" Opacity="0.15" />
                         </Border.Shadow>
                         <VerticalStackLayout Spacing="8">
                             <Label Text="📅" FontSize="32" HorizontalTextAlignment="Center" />
-                            <Label Text="Datum" FontSize="12" TextColor="#6B7280" HorizontalTextAlignment="Center" FontAttributes="Bold" />
+                            <Label Text="Datum" 
+                                   FontSize="12" 
+                                   TextColor="#6B7280" 
+                                   HorizontalTextAlignment="Center" 
+                                   FontAttributes="Bold" />
                             <Label Text="{Binding DiaryItem.Timestamp, StringFormat='{0:dd/MM/yyyy}'}"
-                                   FontSize="13"
+                                   FontSize="14"
                                    TextColor="#1F2937"
                                    FontAttributes="Bold"
                                    HorizontalTextAlignment="Center"
@@ -58,12 +65,15 @@
                     </Border>
 
                     <!-- Tijd Card -->
-                    <Border Grid.Row="0" Grid.Column="1" Padding="20,16" StrokeThickness="0" BackgroundColor="White">
+                    <Border Grid.Row="0" Grid.Column="1" 
+                            Padding="16,14" 
+                            StrokeThickness="0" 
+                            BackgroundColor="White">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="16" />
                         </Border.StrokeShape>
                         <Border.Shadow>
-                            <Shadow Brush="#DBEAFE" Offset="0,4" Radius="12" Opacity="0.5" />
+                            <Shadow Brush="#9ED5CB" Offset="0,4" Radius="12" Opacity="0.15" />
                         </Border.Shadow>
                         <VerticalStackLayout Spacing="8">
                             <Label Text="🕐" 
@@ -81,126 +91,143 @@
                                    HorizontalTextAlignment="Center" />
                         </VerticalStackLayout>
                     </Border>
+
+                    <!-- Maker Card -->
+                    <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                            Padding="16,14"
+                            StrokeThickness="0"
+                            BackgroundColor="White">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="16" />
+                        </Border.StrokeShape>
+                        <Border.Shadow>
+                            <Shadow Brush="#9ED5CB" Offset="0,4" Radius="12" Opacity="0.15" />
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="👤"
+                                   FontSize="32"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="Gemaakt door"
+                                   FontSize="12"
+                                   TextColor="#6B7280"
+                                   HorizontalTextAlignment="Center"
+                                   FontAttributes="Bold" />
+                            <Label Text="{Binding DiaryItem.CreatedBy}"
+                                   FontSize="16"
+                                   TextColor="#1F2937"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
                 </Grid>
 
-                <!-- Foto weergave - Alleen zichtbaar als er een afbeelding is -->
+                <!-- Foto weergave met Jessa groene bar -->
                 <Border Padding="0"
                         StrokeThickness="0"
                         BackgroundColor="White"
+                        Margin="0,4"
                         IsVisible="{Binding DiaryItem.ImageUrl, Converter={StaticResource StringNotNullOrEmptyConverter}}">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="20" />
                     </Border.StrokeShape>
                     <Border.Shadow>
-                        <Shadow Brush="Black"
-                                Offset="0,4"
-                                Radius="12"
-                                Opacity="0.1" />
+                        <Shadow Brush="#9ED5CB" Offset="0,4" Radius="12" Opacity="0.15" />
                     </Border.Shadow>
 
-                    <Image Source="{Binding DiaryItem.ImageUrl}"
-                           Aspect="AspectFill"
-                           HorizontalOptions="Fill"
-                           VerticalOptions="Fill"
-                           HeightRequest="250"
-                           Margin="0">
-                        <Image.Clip>
-                            <RoundRectangleGeometry CornerRadius="20" Rect="0,0,400,250" />
-                        </Image.Clip>
-                    </Image>
+                    <Grid RowDefinitions="Auto,*">
+                        <!-- Colored Header Bar -->
+                        <Border Grid.Row="0"
+                                BackgroundColor="#9ED5CB"
+                                StrokeThickness="0"
+                                HeightRequest="6">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="20,20,0,0" />
+                            </Border.StrokeShape>
+                        </Border>
+
+                        <Image Grid.Row="1"
+                               Source="{Binding DiaryItem.ImageUrl}"
+                               Aspect="AspectFill"
+                               HorizontalOptions="Fill"
+                               VerticalOptions="Fill"
+                               HeightRequest="250"
+                               Margin="0">
+                            <Image.Clip>
+                                <RoundRectangleGeometry CornerRadius="0,0,20,20" Rect="0,0,400,250" />
+                            </Image.Clip>
+                        </Image>
+                    </Grid>
                 </Border>
 
-                <!-- Beschrijving Card -->
-                <Border Padding="24"
+                <!-- Beschrijving Card met Jessa groene bar -->
+                <Border Padding="0"
                         StrokeThickness="0"
-                        BackgroundColor="White">
+                        BackgroundColor="White"
+                        Margin="0,4">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="20" />
                     </Border.StrokeShape>
                     <Border.Shadow>
-                        <Shadow Brush="Black"
-                                Offset="0,4"
-                                Radius="12"
-                                Opacity="0.1" />
+                        <Shadow Brush="#9ED5CB" Offset="0,4" Radius="12" Opacity="0.15" />
                     </Border.Shadow>
 
-                    <VerticalStackLayout Spacing="16">
-                        <!-- Header -->
-                        <HorizontalStackLayout Spacing="10">
-                            <Border WidthRequest="50"
-                                    HeightRequest="50"
-                                    StrokeThickness="0">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="12" />
-                                </Border.StrokeShape>
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Color="#EEF2FF" Offset="0.0" />
-                                        <GradientStop Color="#E0E7FF" Offset="1.0" />
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                                <Label Text="📝"
-                                       FontSize="24"
-                                       HorizontalOptions="Center"
+                    <Grid RowDefinitions="Auto,*" Padding="0">
+                        <!-- Colored Header Bar -->
+                        <Border Grid.Row="0"
+                                BackgroundColor="#9ED5CB"
+                                StrokeThickness="0"
+                                HeightRequest="6">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="20,20,0,0" />
+                            </Border.StrokeShape>
+                        </Border>
+
+                        <VerticalStackLayout Grid.Row="1" Spacing="16" Padding="20">
+                            <!-- Header -->
+                            <HorizontalStackLayout Spacing="12">
+                                <Border WidthRequest="50"
+                                        HeightRequest="50"
+                                        StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12" />
+                                    </Border.StrokeShape>
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#E0F2EF" Offset="0.0" />
+                                            <GradientStop Color="#D1FAE5" Offset="1.0" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <Label Text="📝"
+                                           FontSize="24"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center" />
+                                </Border>
+                                <Label Text="Beschrijving"
+                                       FontSize="22"
+                                       FontAttributes="Bold"
+                                       TextColor="#1F2937"
                                        VerticalOptions="Center" />
-                            </Border>
-                            <Label Text="Beschrijving"
-                                   FontSize="22"
-                                   FontAttributes="Bold"
-                                   TextColor="#1F2937"
-                                   VerticalOptions="Center" />
-                        </HorizontalStackLayout>
+                            </HorizontalStackLayout>
 
-                        <!-- Divider -->
-                        <BoxView HeightRequest="2"
-                                 CornerRadius="1">
-                            <BoxView.Background>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                    <GradientStop Color="Transparent" Offset="0.0" />
-                                    <GradientStop Color="#E5E7EB" Offset="0.5" />
-                                    <GradientStop Color="Transparent" Offset="1.0" />
-                                </LinearGradientBrush>
-                            </BoxView.Background>
-                        </BoxView>
+                            <!-- Divider -->
+                            <BoxView HeightRequest="2" CornerRadius="1">
+                                <BoxView.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="Transparent" Offset="0.0" />
+                                        <GradientStop Color="#E5E7EB" Offset="0.5" />
+                                        <GradientStop Color="Transparent" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </BoxView.Background>
+                            </BoxView>
 
-                        <!-- Description Text -->
-                        <Label Text="{Binding DiaryItem.Description}"
-                               FontSize="16"
-                               TextColor="#374151"
-                               LineHeight="1.6"
-                               LineBreakMode="WordWrap" />
-                    </VerticalStackLayout>
-                </Border>
-                
-                <!-- Maker Card -->
-                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                            Padding="20,16"
-                            StrokeThickness="0"
-                            BackgroundColor="White">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="16" />
-                    </Border.StrokeShape>
-                    <Border.Shadow>
-                        <Shadow Brush="#E0E7FF"
-                                    Offset="0,4"
-                                    Radius="12"
-                                    Opacity="0.5" />
-                    </Border.Shadow>
-                    <VerticalStackLayout Spacing="8">
-                        <Label Text="👤"
-                                   FontSize="32"
-                                   HorizontalTextAlignment="Center" />
-                        <Label Text="Gemaakt door"
-                                   FontSize="12"
-                                   TextColor="#6B7280"
-                                   HorizontalTextAlignment="Center"
-                                   FontAttributes="Bold" />
-                        <Label Text="{Binding DiaryItem.CreatedBy}"
+                            <!-- Description Text -->
+                            <Label Text="{Binding DiaryItem.Description}"
                                    FontSize="16"
-                                   TextColor="#1F2937"
-                                   FontAttributes="Bold"
-                                   HorizontalTextAlignment="Center" />
-                    </VerticalStackLayout>
+                                   TextColor="#374151"
+                                   LineHeight="1.6"
+                                   LineBreakMode="WordWrap" />
+                        </VerticalStackLayout>
+                    </Grid>
                 </Border>
             </VerticalStackLayout>
         </ScrollView>
@@ -208,28 +235,25 @@
         <!-- Action Buttons -->
         <Grid Grid.Row="1"
               ColumnDefinitions="*,*"
-              ColumnSpacing="15"
-              Padding="20"
+              ColumnSpacing="12"
+              Padding="16"
               BackgroundColor="#F5F7FA">
 
             <!-- Edit Button -->
             <Border Grid.Column="0"
                     StrokeThickness="0"
-                    HeightRequest="55">
+                    HeightRequest="50">
                 <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="16" />
+                    <RoundRectangle CornerRadius="12" />
                 </Border.StrokeShape>
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#6366F1" Offset="0.0" />
-                        <GradientStop Color="#8B5CF6" Offset="1.0" />
+                        <GradientStop Color="#9ED5CB" Offset="0.0" />
+                        <GradientStop Color="#7AB8B3" Offset="1.0" />
                     </LinearGradientBrush>
                 </Border.Background>
                 <Border.Shadow>
-                    <Shadow Brush="#6366F1"
-                            Offset="0,4"
-                            Radius="12"
-                            Opacity="0.3" />
+                    <Shadow Brush="#9ED5CB" Offset="0,4" Radius="12" Opacity="0.3" />
                 </Border.Shadow>
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding EditItemCommand}" />
@@ -252,9 +276,9 @@
             <!-- Delete Button -->
             <Border Grid.Column="1"
                     StrokeThickness="0"
-                    HeightRequest="55">
+                    HeightRequest="50">
                 <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="16" />
+                    <RoundRectangle CornerRadius="12" />
                 </Border.StrokeShape>
                 <Border.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -263,10 +287,7 @@
                     </LinearGradientBrush>
                 </Border.Background>
                 <Border.Shadow>
-                    <Shadow Brush="#EF4444"
-                            Offset="0,4"
-                            Radius="12"
-                            Opacity="0.3" />
+                    <Shadow Brush="#EF4444" Offset="0,4" Radius="12" Opacity="0.3" />
                 </Border.Shadow>
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding DeleteItemCommand}" />
