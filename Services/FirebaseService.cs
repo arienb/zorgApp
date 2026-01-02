@@ -1,6 +1,7 @@
 ﻿using Microsoft.Maui.Storage;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,6 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using zorgApp.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace zorgApp.Services
 {
@@ -250,7 +252,7 @@ namespace zorgApp.Services
         }
 
         // -------------------------------------- 
-        //  PATIENT INFO UPDATEN & DELETEN
+        //  PATIENT INFO UPDATEN & DELETEN (+PDF)
         // -------------------------------------- 
         public async Task UpdatePatientAsync(string id, Patient patient)
         {
@@ -292,21 +294,17 @@ namespace zorgApp.Services
 
                 // ⚠️ KRITIEKE FIX: Gebruik PATCH in plaats van PUT om alleen specifieke velden te updaten
                 // PUT vervangt het hele object en verwijdert nested data zoals diaryItems!
-                var toUpdate = new
+                var toUpdate = new Dictionary<string, object?>
                 {
-                    patient.Name,
-                    patient.Email,
-                    patient.Age,
-                    patient.RoomNumber,
-                    patient.UniqueCode,
-                    patient.CallName,
-                    patient.Hobbies,
-                    patient.Work,
-                    patient.FavoriteFood,
-                    patient.FavoriteFilm,
-                    patient.FavoriteMusic,
-                    patient.ProfileImageUrl,
-                    patient.DepartmentName
+                    { "email", patient.Email },
+                    { "age", patient.Age },
+                    { "callName", patient.CallName },
+                    { "hobbies", patient.Hobbies },
+                    { "work", patient.Work },
+                    { "favoriteFood", patient.FavoriteFood },
+                    { "favoriteFilm", patient.FavoriteFilm },
+                    { "favoriteMusic", patient.FavoriteMusic },
+                    { "profileImageUrl", patient.ProfileImageUrl }
                 };
 
                 var json = JsonSerializer.Serialize(toUpdate);
@@ -337,6 +335,30 @@ namespace zorgApp.Services
             {
                 System.Diagnostics.Debug.WriteLine($"Firebase DeletePatient Error: {ex.Message}");
                 throw;
+            }
+        }
+
+        public async Task ExportDiaryPdfAndSendEmailAsync(string patientId)
+        {
+            var url = "https://europe-west1-zorgapp-316e8.cloudfunctions.net/exportDiaryPdf";
+
+            var payload = new Dictionary<string, string>
+            {
+                { "patientId", patientId }
+            };
+            var json = JsonSerializer.Serialize(payload);
+
+            using var client = new HttpClient();
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync(url, content);
+
+            var result = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine("HTTP RESPONSE = " + await response.Content.ReadAsStringAsync());
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Debug.WriteLine("WARNING: Function returned non-success status: " + response.StatusCode);
             }
         }
 

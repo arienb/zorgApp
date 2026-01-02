@@ -100,7 +100,7 @@
 
                         <!-- Email -->
                         <VerticalStackLayout Spacing="8">
-                            <Label Text="Email *" 
+                            <Label Text="Email" 
                                    FontSize="13" 
                                    TextColor="#6B7280"
                                    FontAttributes="Bold"/>
@@ -111,7 +111,7 @@
                                     <RoundRectangle CornerRadius="10"/>
                                 </Border.StrokeShape>
                                 <Entry Text="{Binding Email}"
-                                       Placeholder="Voer email in"
+                                       Placeholder="Voer email in (familie kan deze bewerken)"
                                        Keyboard="Email"
                                        BackgroundColor="Transparent"
                                        TextColor="#1F2937"
@@ -171,7 +171,7 @@
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8"/>
                             </Border.StrokeShape>
-                            <Label Text="Alle velden zijn verplicht"
+                            <Label Text="Alle velden met * zijn verplicht"
                                    FontSize="12"
                                    TextColor="#065F46"
                                    FontAttributes="Bold"/>

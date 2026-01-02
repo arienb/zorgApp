@@ -283,7 +283,7 @@
                     </Border>
 
                     <VerticalStackLayout Grid.Row="1" Spacing="16" Padding="20,20,20,24">
-                        <!-- Header met emoji -->
+                        <!-- Header -->
                         <HorizontalStackLayout Spacing="12" Margin="0,0,0,8">
                             <Label Text="Persoonlijk profiel"
                                    FontSize="20"
@@ -325,7 +325,27 @@
                                            PlaceholderColor="#9CA3AF"/>
                                 </Border>
                             </VerticalStackLayout>
-
+                            
+                            <!-- Email -->
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="Email" 
+                                       FontSize="13" 
+                                       TextColor="#6B7280"
+                                       FontAttributes="Bold"/>
+                                <Border Padding="14,12"
+                                        StrokeThickness="0"
+                                        BackgroundColor="#F9FAFB">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10"/>
+                                    </Border.StrokeShape>
+                                    <Entry Text="{Binding Patient.Email}"
+                                           Placeholder="Email waarnaar het dagboek verstuurd wordt"
+                                           BackgroundColor="Transparent"
+                                           TextColor="#1F2937"
+                                           PlaceholderColor="#9CA3AF"/>
+                                </Border>
+                            </VerticalStackLayout>
+                            
                             <!-- Hobbies -->
                             <VerticalStackLayout Spacing="8">
                                 <Label Text="Hobby's" 

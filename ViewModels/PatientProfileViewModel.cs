@@ -22,13 +22,6 @@ namespace zorgApp.ViewModels
         [ObservableProperty] 
         private bool isUploadingImage;
 
-        [ObservableProperty] private bool isEditingCallName;
-        [ObservableProperty] private bool isEditingHobbies;
-        [ObservableProperty] private bool isEditingFood;
-        [ObservableProperty] private bool isEditingFilm;
-        [ObservableProperty] private bool isEditingMusic;
-        [ObservableProperty] private bool isEditingWork;
-
         public PatientProfileViewModel(FirebaseService firebaseService)
         {
             _firebaseService = firebaseService;

@@ -80,12 +80,6 @@ public partial class NewPatientViewModel : ObservableObject
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(Email))
-        {
-            await Shell.Current.DisplayAlert("Validatie", "Email is verplicht", "OK");
-            return;
-        }
-
         if (string.IsNullOrWhiteSpace(AgeText))
         {
             await Shell.Current.DisplayAlert("Validatie", "Leeftijd is verplicht", "OK");
