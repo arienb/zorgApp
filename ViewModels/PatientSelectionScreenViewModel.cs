@@ -142,6 +142,10 @@ public partial class PatientSelectionScreenViewModel : ObservableObject
 
         try
         {
+            //pdf export
+            await _firebaseService.ExportDiaryPdfAndSendEmailAsync(patient.FirebaseId);
+
+            //verwijderen
             if (!string.IsNullOrEmpty(patient.FirebaseId))
             {
                 await _firebaseService.DeletePatientAsync(patient.FirebaseId);
