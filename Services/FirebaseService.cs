@@ -269,7 +269,10 @@ namespace zorgApp.Services
                     patient.DepartmentName
                 };
 
-                var json = JsonSerializer.Serialize(toUpdate);
+                var json = JsonSerializer.Serialize(toUpdate, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"/{PatientsNode}/{id}.json", content);
                 response.EnsureSuccessStatusCode();
@@ -294,20 +297,23 @@ namespace zorgApp.Services
 
                 // ⚠️ KRITIEKE FIX: Gebruik PATCH in plaats van PUT om alleen specifieke velden te updaten
                 // PUT vervangt het hele object en verwijdert nested data zoals diaryItems!
-                var toUpdate = new Dictionary<string, object?>
+                var toUpdate = new 
                 {
-                    { "email", patient.Email },
-                    { "age", patient.Age },
-                    { "callName", patient.CallName },
-                    { "hobbies", patient.Hobbies },
-                    { "work", patient.Work },
-                    { "favoriteFood", patient.FavoriteFood },
-                    { "favoriteFilm", patient.FavoriteFilm },
-                    { "favoriteMusic", patient.FavoriteMusic },
-                    { "profileImageUrl", patient.ProfileImageUrl }
+                    patient.Email,
+                    patient.Age,
+                    patient.CallName,
+                    patient.Hobbies,
+                    patient.Work,
+                    patient.FavoriteFood,
+                    patient.FavoriteFilm,
+                    patient.FavoriteMusic,
+                    patient.ProfileImageUrl
                 };
 
-                var json = JsonSerializer.Serialize(toUpdate);
+                var json = JsonSerializer.Serialize(toUpdate, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 // ✅ GEBRUIK PATCH IN PLAATS VAN PUT
@@ -403,6 +409,34 @@ namespace zorgApp.Services
             }
         }
 
+        public async Task<DiaryItem?> GetDiaryItemByIdAsync(string patientId, string itemId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"/{PatientsNode}/{patientId}/diaryItems/{itemId}.json");
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                var content = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrWhiteSpace(content) || content == "null")
+                    return null;
+
+                var item = JsonSerializer.Deserialize<DiaryItem>(content, _jsonOptions);
+                if (item != null)
+                {
+                    item.Id = itemId;
+                    item.PatientId = patientId;
+                }
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Firebase GetDiaryItemById Error: {ex.Message}");
+                return null;
+            }
+        }
+
         public async Task<string> AddDiaryItemAsync(
             string patientId,
             DiaryItem item,
@@ -412,9 +446,10 @@ namespace zorgApp.Services
         {
             try
             {
-                if (imageStream != null && !string.IsNullOrEmpty(fileName))
+                if (imageStream != null)
                 {
-                    var imageUrl = await UploadImageAsync(imageStream, fileName);
+                    var safeFileName = $"diary_{patientId}_{DateTime.Now:yyyyMMddHHmmss}.jpg";
+                    var imageUrl = await UploadImageAsync(imageStream, $"diary/{safeFileName}");
                     item.ImageUrl = imageUrl;
                 }
 
@@ -444,34 +479,6 @@ namespace zorgApp.Services
             }
         }
 
-        public async Task<DiaryItem?> GetDiaryItemByIdAsync(string patientId, string itemId)
-        {
-            try
-            {
-                var response = await _httpClient.GetAsync($"/{PatientsNode}/{patientId}/diaryItems/{itemId}.json");
-                if (!response.IsSuccessStatusCode)
-                    return null;
-
-                var content = await response.Content.ReadAsStringAsync();
-                if (string.IsNullOrWhiteSpace(content) || content == "null")
-                    return null;
-
-                var item = JsonSerializer.Deserialize<DiaryItem>(content, _jsonOptions);
-                if (item != null)
-                {
-                    item.Id = itemId;
-                    item.PatientId = patientId;
-                }
-
-                return item;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Firebase GetDiaryItemById Error: {ex.Message}");
-                return null;
-            }
-        }
-
         public async Task UpdateDiaryItemAsync(string patientId, DiaryItem item)
         {
             try
@@ -485,7 +492,10 @@ namespace zorgApp.Services
                     item.ImageUrl
                 };
 
-                var json = JsonSerializer.Serialize(itemToUpdate);
+                var json = JsonSerializer.Serialize(itemToUpdate, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var response = await _httpClient.PutAsync($"/{PatientsNode}/{patientId}/diaryItems/{item.Id}.json", content);
                 response.EnsureSuccessStatusCode();
@@ -518,7 +528,10 @@ namespace zorgApp.Services
         {
             try
             {
+                //var bucket = "zorgapp-316e8.appspot.com";
+
                 var storageUrl =
+                    //$"https://firebasestorage.googleapis.com/v0/b/{bucket}/o/{Uri.EscapeDataString(fileName)}?uploadType=media";
                     $"https://firebasestorage.googleapis.com/v0/b/zorgapp-316e8.firebasestorage.app/o/{Uri.EscapeDataString(fileName)}?uploadType=media";
 
                 var content = new StreamContent(imageStream);
@@ -528,6 +541,7 @@ namespace zorgApp.Services
                 response.EnsureSuccessStatusCode();
 
                 return
+                    //$"https://firebasestorage.googleapis.com/v0/b/{bucket}/o/{Uri.EscapeDataString(fileName)}?alt=media";
                     $"https://firebasestorage.googleapis.com/v0/b/zorgapp-316e8.firebasestorage.app/o/{Uri.EscapeDataString(fileName)}?alt=media";
             }
             catch (Exception ex)
